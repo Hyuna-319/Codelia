@@ -1,0 +1,59 @@
+{
+    "name": "requirement-improver",
+    "version": "1.0.0",
+    "description": "INCOSE Requirement Analyzer",
+    "main": "main.js",
+    "scripts": {
+        "start": "electron .",
+        "dist": "electron-builder"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Hyuna-319/requirement_improver.git"
+    },
+    "devDependencies": {
+        "electron": "^28.0.0",
+        "electron-builder": "^24.9.1"
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2",
+        "wait-on": "^7.2.0"
+    },
+    "build": {
+        "appId": "com.example.requirementimprover",
+        "productName": "Requirement Analyzer",
+        "publish": null,
+        "mac": {
+            "target": "dmg",
+            "category": "public.app-category.productivity"
+        },
+        "win": {
+            "target": "nsis",
+            "icon": "build/icon.ico"
+        },
+        "files": [
+            "**/*",
+            "!build_python.sh",
+            "!requirements.txt",
+            "!modules/**",
+            "!prompts/**",
+            "!config.py",
+            "!api.py",
+            "!dist/**",
+            "!.github/**",
+            "!*.spec"
+        ],
+        "extraResources": [
+            {
+                "from": "dist/api",
+                "to": "api",
+                "filter": [
+                    "**/*"
+                ]
+            }
+        ]
+    }
+}
