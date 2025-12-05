@@ -1,5 +1,5 @@
 {
-    "name": "requirement-improver",
+    "name": "Requirement-Analyzer",
     "version": "1.0.0",
     "description": "INCOSE Requirement Analyzer",
     "main": "main.js",
@@ -12,7 +12,7 @@
     "license": "ISC",
     "repository": {
         "type": "git",
-        "url": "https://github.com/Hyuna-319/requirement_improver.git"
+        "url": "https://github.com/Hyuna-319/Codelia.git"
     },
     "devDependencies": {
         "electron": "^28.0.0",
