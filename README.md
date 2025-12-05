@@ -31,7 +31,4 @@ This command will:
 1.  Launch the Electron application window.
 2.  Automatically start the Python Flask backend server (using `python3`).
 
-## Troubleshooting
 
--   If the API key is not saved, check if the `.requirement_improver` folder exists in your home directory.
--   If the backend fails to start, try running `python api.py` manually to see any error messages.
