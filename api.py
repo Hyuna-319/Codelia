@@ -16,7 +16,7 @@ app = Flask(__name__)
 CORS(app)
 
 # API Key Storage Path
-CONFIG_DIR = Path.home() / ".requirement_improver"
+CONFIG_DIR = Path.home() / ".Codelia"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 
 def load_config():
