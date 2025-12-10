@@ -5,7 +5,7 @@
     "main": "dist/main/src/main/main.js",
     "scripts": {
         "build:backend": "tsc -p tsconfig.backend.json",
-        "build:backend:exe": "astra build dist/backend/src/backend/server.js -n node_v22.15.1-win-x64 -o resources/backend --noMetadata",
+        "build:backend:exe": "astra build dist/backend/src/backend/server.js -n node_v22.15.1-win-x64 -o resources/backend/server.exe --noMetadata || (mv resources/backend/build.exe resources/backend/server.exe 2>/dev/null || move resources\\backend\\build.exe resources\\backend\\server.exe)",
         "build:main": "tsc -p tsconfig.main.json",
         "build:renderer": "tsc -p tsconfig.renderer.json",
         "build": "npm run build:backend && npm run build:main && npm run build:renderer",
