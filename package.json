@@ -5,14 +5,18 @@
     "main": "dist/main/src/main/main.js",
     "scripts": {
         "build:backend": "tsc -p tsconfig.backend.json",
+        "build:backend:exe": "pkg dist/backend/src/backend/server.js -t node18-win-x64 -o resources/backend/server.exe",
         "build:main": "tsc -p tsconfig.main.json",
         "build:renderer": "tsc -p tsconfig.renderer.json",
         "build": "npm run build:backend && npm run build:main && npm run build:renderer",
+        "prebuild:exe": "npm run build",
+        "build:exe": "npm run build:backend:exe",
         "dev:backend": "tsx watch src/backend/server.ts",
         "dev:main": "electron .",
         "dev": "concurrently \"npm run dev:backend\" \"npm run dev:main\"",
         "start": "electron .",
-        "dist": "npm run build && electron-builder"
+        "predist": "npm run build:exe",
+        "dist": "electron-builder"
     },
     "keywords": [],
     "author": "",
@@ -28,6 +32,7 @@
         "@types/wait-on": "^5.3.4",
         "electron": "^28.0.0",
         "electron-builder": "^24.9.1",
+        "pkg": "^5.8.1",
         "ts-node": "^10.9.2",
         "tsx": "^4.7.0",
         "typescript": "^5.3.3"
@@ -55,6 +60,7 @@
         },
         "files": [
             "dist/**/*",
+            "resources/**/*",
             "index.html",
             "prompts/**/*",
             "!src/**",
