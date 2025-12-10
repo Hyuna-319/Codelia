@@ -113,22 +113,42 @@ export class AIClient {
     }
 
     /**
-     * Gemini API call
+     * Build Gemini API URL
+     * Composes: {baseUrl}/models/{model}:generateContent?key={apiKey}
      */
-    private async callGemini(systemPrompt: string, userMessage: string): Promise<string> {
+    private buildGeminiUrl(): string {
         if (!this.baseUrl) {
             throw new Error('Gemini Base URL not configured');
         }
 
+        // Remove trailing slash from base URL
+        const baseUrl = this.baseUrl.replace(/\/$/, '');
+
+        // Check if baseUrl already contains the full endpoint
+        if (baseUrl.includes('/models/') && baseUrl.includes(':generateContent')) {
+            // Already a full URL, just add API key as query parameter
+            return `${baseUrl}?key=${this.apiKey}`;
+        }
+
+        // Compose URL: base + models + model + endpoint + key
+        return `${baseUrl}/models/${this.model}:generateContent?key=${this.apiKey}`;
+    }
+
+    /**
+     * Gemini API call
+     */
+    private async callGemini(systemPrompt: string, userMessage: string): Promise<string> {
         // Combine system prompt and user message
         const fullPrompt = `${systemPrompt}\n\nUser Request:\n${userMessage}`;
 
         try {
-            const response = await fetch(this.baseUrl, {
+            const url = this.buildGeminiUrl();
+            console.log(`[Gemini] Calling API: ${url.replace(/key=[^&]+/, 'key=***')}`);
+
+            const response = await fetch(url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'x-goog-api-key': this.apiKey
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     contents: [{
@@ -138,7 +158,8 @@ export class AIClient {
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${response.statusText}\n${errorText}`);
             }
 
             const result: any = await response.json();
@@ -179,49 +200,105 @@ export class AIClient {
     }
 
     /**
-     * Enterprise Gateway API call
+     * Build Enterprise Gateway URL
+     * Supports both Gemini-style and OpenAI-style endpoints
      */
-    private async callEnterpriseGateway(systemPrompt: string, userMessage: string): Promise<string> {
+    private buildEnterpriseGatewayUrl(): string {
         if (!this.baseUrl) {
             throw new Error('Enterprise Gateway Base URL not configured');
         }
 
+        const baseUrl = this.baseUrl.replace(/\/$/, '');
+
+        // If URL already contains full endpoint, use as-is
+        if (baseUrl.includes(':generateContent') || baseUrl.includes('/chat/completions')) {
+            return baseUrl;
+        }
+
+        // Default: assume Gemini-style endpoint
+        return `${baseUrl}/models/${this.model || 'gemini-2.0-flash'}:generateContent`;
+    }
+
+    /**
+     * Enterprise Gateway API call
+     */
+    private async callEnterpriseGateway(systemPrompt: string, userMessage: string): Promise<string> {
         try {
-            const response = await fetch(this.baseUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
-                },
-                body: JSON.stringify({
+            const baseUrl = this.buildEnterpriseGatewayUrl();
+
+            // Add API key as query parameter if URL contains 'generateContent' (Gemini-style)
+            const url = baseUrl.includes(':generateContent')
+                ? `${baseUrl}?key=${this.apiKey}`
+                : baseUrl;
+
+            console.log(`[Enterprise] Calling API: ${url.replace(/key=[^&]+/, 'key=***')}`);
+
+            // Determine request format based on endpoint
+            const isGeminiStyle = baseUrl.includes(':generateContent');
+
+            const headers: Record<string, string> = {
+                'Content-Type': 'application/json'
+            };
+
+            // Add Authorization header for OpenAI-style endpoints
+            if (!isGeminiStyle) {
+                headers['Authorization'] = `Bearer ${this.apiKey}`;
+            }
+
+            const body = isGeminiStyle
+                ? JSON.stringify({
+                    contents: [{
+                        parts: [{ text: `${systemPrompt}\n\nUser Request:\n${userMessage}` }]
+                    }]
+                })
+                : JSON.stringify({
                     messages: [
                         { role: 'system', content: systemPrompt },
                         { role: 'user', content: userMessage }
                     ],
                     max_tokens: this.maxTokens,
                     temperature: 0.7
-                })
+                });
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers,
+                body
             });
 
             if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                const errorText = await response.text();
+                throw new Error(`HTTP ${response.status}: ${response.statusText}\n${errorText}`);
             }
 
             const result: any = await response.json();
 
             // Handle various response formats
-            if (result.choices && result.choices[0]) {
+            // Gemini-style response
+            if (result.candidates && result.candidates[0]) {
+                return result.candidates[0].content.parts[0].text;
+            }
+            // OpenAI-style response
+            else if (result.choices && result.choices[0]) {
                 return result.choices[0].message.content;
-            } else if (result.content) {
+            }
+            // Claude-style response
+            else if (result.content) {
                 if (Array.isArray(result.content)) {
                     return result.content[0].text;
                 }
                 return result.content;
-            } else if (result.response) {
+            }
+            // Generic response field
+            else if (result.response) {
                 return result.response;
             }
+            // Text field
+            else if (result.text) {
+                return result.text;
+            }
 
-            return String(result);
+            throw new Error(`Unknown response format: ${JSON.stringify(result)}`);
         } catch (error) {
             throw new Error(`Enterprise Gateway call failed: ${error}`);
         }
