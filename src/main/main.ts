@@ -43,6 +43,23 @@ class ApplicationManager {
             const exeName = process.platform === 'win32' ? 'server.exe' : 'server';
             executable = path.join(process.resourcesPath, 'backend', exeName);
             console.log(`[PACKAGED] Using bundled executable: ${executable}`);
+            console.log(`[PACKAGED] resourcesPath: ${process.resourcesPath}`);
+
+            // Check if file exists
+            const fs = require('fs');
+            if (fs.existsSync(executable)) {
+                console.log(`[PACKAGED] ✓ Backend executable found`);
+            } else {
+                console.error(`[PACKAGED] ✗ Backend executable NOT found at: ${executable}`);
+                console.log(`[PACKAGED] Listing resourcesPath contents:`);
+                try {
+                    const files = fs.readdirSync(process.resourcesPath);
+                    console.log(files);
+                } catch (err) {
+                    console.error(`[PACKAGED] Error listing directory:`, err);
+                }
+                return;
+            }
         } else {
             // Development: Use tsx to run TypeScript directly
             executable = 'npx';
@@ -65,6 +82,7 @@ class ApplicationManager {
 
         this.backendProcess.on('error', (err) => {
             console.error(`Failed to start backend process: ${err.message}`);
+            console.error(`Error details:`, err);
         });
     }
 
