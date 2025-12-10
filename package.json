@@ -81,6 +81,13 @@
                 "filter": [
                     "**/*"
                 ]
+            },
+            {
+                "from": "resources/backend",
+                "to": "backend",
+                "filter": [
+                    "**/*"
+                ]
             }
         ]
     }
