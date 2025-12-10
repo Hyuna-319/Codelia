@@ -22,10 +22,13 @@ jobs:
     - name: Install dependencies
       run: npm ci
     
+    - name: Install Astra Node.js binary
+      run: npx astra install node_v22.15.1-win-x64
+    
     - name: Build TypeScript
       run: npm run build
     
-    - name: Bundle backend executable
+    - name: Bundle backend executable with Astra
       run: npm run build:exe
     
     - name: Build Windows executable
