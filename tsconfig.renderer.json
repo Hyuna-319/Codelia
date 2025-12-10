@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "ES2022",
+        "lib": [
+            "ES2022",
+            "DOM",
+            "DOM.Iterable"
+        ],
+        "outDir": "./dist/renderer",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "moduleResolution": "node",
+        "types": [
+            "node"
+        ],
+        "composite": true,
+        "declaration": true
+    },
+    "include": [
+        "src/renderer/**/*",
+        "src/shared/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}
