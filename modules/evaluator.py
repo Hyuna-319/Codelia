@@ -39,16 +39,46 @@ class RequirementEvaluator:
         ]
     
     def evaluate(self, text: str) -> Dict:
-
         try:
-            scores = self.ai_client.evaluate_requirement(
-                scoring_prompt=self.scoring_prompt,
-                text=text
-            )
+            user_message = f"""
+Requirement to Evaluate:
+{text}
+
+Please evaluate this requirement and provide the score in JSON format as specified.
+"""
+            # Gemini specific instruction
+            if self.ai_client.provider == 'gemini':
+                user_message += "\nIMPORTANT: Output ONLY valid JSON."
+
+            response = self.ai_client.call_api(self.scoring_prompt, user_message)
+            
+            # Parse JSON response
+            scores = self._parse_json_response(response)
             return self._process_scores(scores)
         except Exception as e:
-           
+            print(f"Evaluation failed: {e}")
             return self._get_default_scores()
+
+    def _parse_json_response(self, response: str) -> Dict:
+        import json
+        try:
+            clean_response = response.strip()
+            if clean_response.startswith('```json'):
+                clean_response = clean_response[7:]
+            if clean_response.startswith('```'):
+                clean_response = clean_response[3:]
+            if clean_response.endswith('```'):
+                clean_response = clean_response[:-3]
+            
+            json_start = clean_response.find('{')
+            json_end = clean_response.rfind('}') + 1
+            if json_start >= 0 and json_end > json_start:
+                json_str = clean_response[json_start:json_end]
+                return json.loads(json_str)
+            else:
+                return json.loads(clean_response)
+        except Exception as e:
+            raise Exception(f"Failed to parse JSON response: {str(e)}")
     
     def _process_scores(self, scores: Dict) -> Dict:
         

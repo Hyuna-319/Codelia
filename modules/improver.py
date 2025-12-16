@@ -18,13 +18,25 @@ class RequirementImprover:
         original_text: str,
         pattern_data: Dict
     ) -> Dict:
-
         
-        improved_text = self.ai_client.improve_requirement(
-            quality_prompt=self.quality_prompt,
-            original_text=original_text,
-            pattern_data=pattern_data
-        )
+        pattern_type = pattern_data.get('pattern', 'ubiquitous')
+        pattern_context = f"Pattern Type: {pattern_type}\n\n"
+        
+        for key, value in pattern_data.items():
+            if key != 'pattern' and value:
+                pattern_context += f"{key.replace('_', ' ').title()}: {value}\n"
+        
+        user_message = f"""
+Original Requirement: {original_text}
+
+{pattern_context}
+
+Please improve this requirement based on the INCOSE rules provided in the system prompt.
+Use the pattern information above to structure the improved requirement appropriately.
+If any pattern fields are missing, do not include them in the improved requirement.
+"""
+        
+        improved_text = self.ai_client.call_api(self.quality_prompt, user_message)
         
         return {
             "original": original_text,
