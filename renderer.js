@@ -29,14 +29,17 @@ function switchView(viewName) {
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => item.classList.remove('active'));
     if (viewName === 'improvement') navItems[0].classList.add('active');
-    if (viewName === 'settings') navItems[1].classList.add('active');
+    if (viewName === 'history') navItems[1].classList.add('active');
+    if (viewName === 'settings') navItems[2].classList.add('active');
 }
 
 // Input Mode Switching
 function switchInputMode(mode) {
     // Update tab buttons
-    document.getElementById('tabDirectInput').classList.toggle('active', mode === 'direct');
-    document.getElementById('tabPatternInput').classList.toggle('active', mode === 'pattern');
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+    if (mode === 'direct') tabs[0].classList.add('active');
+    if (mode === 'pattern') tabs[1].classList.add('active');
 
     // Update content visibility
     document.getElementById('directInputMode').classList.toggle('hidden', mode !== 'direct');

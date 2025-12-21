@@ -37,6 +37,7 @@
             display: flex;
             flex-direction: column;
             padding: 20px 10px;
+            flex-shrink: 0;
         }
 
         .app-title {
@@ -54,6 +55,12 @@
 
         .nav-menu {
             list-style: none;
+            flex: 1;
+        }
+
+        .nav-menu-bottom {
+            list-style: none;
+            margin-top: auto;
         }
 
         .nav-item {
@@ -82,18 +89,19 @@
             font-size: 16px;
         }
 
-        /* Main Content */
-        .main-content {
+        /* Main Content Container */
+        .main-container {
             flex: 1;
-            background-color: var(--content-bg);
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
+        /* Page Header */
         .page-header {
             padding: 20px 40px;
             border-bottom: 1px solid var(--border-color);
+            background-color: var(--content-bg);
         }
 
         .breadcrumbs {
@@ -108,11 +116,78 @@
             color: #172B4D;
         }
 
-        .page-body {
+        /* Content Area (3-column layout) */
+        .content-area {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Main Content (left/center) */
+        .main-content {
+            flex: 1;
+            background-color: var(--content-bg);
+            overflow-y: auto;
             padding: 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
+        }
+
+        /* Right Panel (Guide) */
+        .right-panel {
+            width: 320px;
+            background-color: #FAFBFC;
+            border-left: 1px solid var(--border-color);
+            overflow-y: auto;
+            padding: 30px 20px;
+            flex-shrink: 0;
+        }
+
+        .guide-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #172B4D;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+        }
+
+        .guide-description {
+            font-size: 13px;
+            color: #6B778C;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .guide-link {
+            display: block;
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 3px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .guide-link:hover {
+            background-color: white;
+            border-color: var(--border-color);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .guide-link-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #172B4D;
+            margin-bottom: 4px;
+        }
+
+        .guide-link:hover .guide-link-title {
+            color: var(--primary-color);
+        }
+
+        .guide-link-desc {
+            font-size: 11px;
+            color: #6B778C;
         }
 
         /* Views */
@@ -122,6 +197,34 @@
 
         .view-section.active {
             display: block;
+        }
+
+        /* Tabs */
+        .tabs {
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 30px;
+            display: flex;
+            gap: 32px;
+        }
+
+        .tab {
+            padding: 12px 4px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #6B778C;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab:hover {
+            color: #172B4D;
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
         }
 
         /* Forms & Inputs */
@@ -205,90 +308,48 @@
             background-color: rgba(9, 30, 66, 0.08);
         }
 
-        /* Panels / Macros */
+        /* Panels */
         .panel {
-            border-radius: 3px;
             padding: 16px;
+            border-radius: 3px;
             margin-bottom: 16px;
-            display: flex;
-            align-items: flex-start;
+            border-left: 4px solid;
         }
 
-        .panel-info {
-            background-color: #DEEBFF;
-            color: #0747A6;
+        .panel-warning {
+            background-color: #FFF4E5;
+            border-color: #FF991F;
         }
 
         .panel-success {
             background-color: #E3FCEF;
-            color: #006644;
-        }
-
-        .panel-warning {
-            background-color: #FFFAE6;
-            color: #BF2600;
-            /* Actually red for warning text usually, or dark orange */
+            border-color: #00875A;
         }
 
         .panel-icon {
-            margin-right: 12px;
-            font-size: 16px;
+            margin-right: 8px;
         }
 
-        /* Grid */
-        .grid-3 {
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        .grid-2 {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: 20px;
-        }
-
-        /* Results */
-        .result-card {
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .result-header {
-            background-color: #F4F5F7;
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .result-body {
-            padding: 20px;
-            background-color: white;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-success {
-            background-color: #E3FCEF;
-            color: #006644;
         }
 
         /* Loading */
         .loading-spinner {
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
+            border: 3px solid #f3f3f3;
             border-top: 3px solid var(--primary-color);
-            width: 24px;
-            height: 24px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
+            margin: 0 auto 16px;
         }
 
         @keyframes spin {
@@ -301,401 +362,356 @@
             }
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        /* Results Layout */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
+        /* Score Panels */
         .score-panel {
-            border: 2px solid;
-            border-radius: 3px;
+            background: #FAFBFC;
+            border: 2px solid #DFE1E6;
+            border-radius: 4px;
             padding: 20px;
         }
 
         .score-panel.original {
-            border-color: #0052CC;
+            border-left: 4px solid #FF5630;
         }
 
         .score-panel.improved {
-            border-color: #BF2600;
+            border-left: 4px solid #00875A;
         }
 
         .score-total {
             text-align: center;
-            margin-bottom: 20px;
             padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 2px solid #DFE1E6;
+            margin-bottom: 20px;
         }
 
         .score-number {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 700;
+            color: #172B4D;
             margin-bottom: 8px;
         }
 
         .score-percent {
-            font-size: 14px;
+            font-size: 18px;
             color: #6B778C;
+            margin-bottom: 8px;
         }
 
         .score-delta {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
-            color: #BF2600;
-            margin-top: 8px;
+            color: #00875A;
         }
 
         .category-score {
-            margin-bottom: 16px;
-        }
-
-        .category-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 4px;
-            font-size: 13px;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #EBECF0;
         }
 
         .category-name {
+            font-size: 13px;
+            color: #42526E;
+        }
+
+        .category-value {
+            font-size: 13px;
             font-weight: 600;
             color: #172B4D;
         }
 
-        .category-value {
-            color: #6B778C;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background-color: #EBECF0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #0052CC;
-            transition: width 0.3s ease;
-        }
-
-        .progress-bar-fill.improved {
-            background-color: #36B37E;
-        }
-
-        /* Detailed Score Table */
+        /* Score Table */
         .score-table-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
+            overflow-x: auto;
         }
 
         .score-table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
+            border: 1px solid #DFE1E6;
         }
 
         .score-table th {
-            background-color: #F4F5F7;
-            padding: 10px;
+            background: #F4F5F7;
+            padding: 12px;
             text-align: left;
             font-size: 12px;
             font-weight: 600;
             color: #5E6C84;
-            position: sticky;
-            top: 0;
-            border-bottom: 2px solid var(--border-color);
+            border-bottom: 2px solid #DFE1E6;
         }
 
         .score-table td {
-            padding: 10px;
-            border-bottom: 1px solid #EBECF0;
+            padding: 10px 12px;
             font-size: 13px;
+            border-bottom: 1px solid #EBECF0;
         }
 
         .score-table tr:hover {
             background-color: #F4F5F7;
         }
 
-        .score-change {
-            font-weight: 600;
-            color: #36B37E;
-        }
-
-        .score-change.negative {
-            color: #BF2600;
-        }
-
         /* Requirement Cards */
-        .req-card {
-            border: 1px solid var(--border-color);
+        .requirement-card {
+            background: white;
+            border: 2px solid #DFE1E6;
+            border-radius: 4px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .requirement-card-header {
+            font-size: 14px;
+            font-weight: 600;
+            color: #5E6C84;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #EBECF0;
+        }
+
+        .requirement-card-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #172B4D;
+            font-family: 'Courier New', monospace;
+            background: #FAFBFC;
+            padding: 12px;
+            border-radius: 3px;
+        }
+
+        /* Improvement Items */
+        .improvement-item {
+            background: white;
+            border: 1px solid #DFE1E6;
+            border-left: 4px solid var(--primary-color);
             border-radius: 3px;
             padding: 16px;
             margin-bottom: 12px;
-            background-color: #FAFBFC;
-        }
-
-        .req-card-header {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .req-number-badge {
-            background-color: #0052CC;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .req-pattern-badge {
-            background-color: #DFE1E6;
-            color: #42526E;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .req-text {
-            color: #172B4D;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-        /* Improvements List */
-        .improvement-item {
-            margin-bottom: 16px;
-            padding-left: 24px;
-            position: relative;
-        }
-
-        .improvement-item::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #36B37E;
-            font-weight: 700;
-            font-size: 16px;
         }
 
         .improvement-title {
-            font-weight: 600;
             font-size: 14px;
             font-weight: 600;
+            color: #172B4D;
+            margin-bottom: 8px;
+        }
+
+        .improvement-content {
+            font-size: 13px;
+            color: #42526E;
+            line-height: 1.5;
+        }
+
+        /* Pattern Input Sections */
+        .pattern-section {
+            display: none;
+        }
+
+        .pattern-section.active {
+            display: block;
+        }
+
+        .pattern-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .pattern-btn {
+            padding: 8px 16px;
+            border: 2px solid #DFE1E6;
+            border-radius: 3px;
+            background: white;
+            font-size: 13px;
+            font-weight: 500;
+            color: #42526E;
             cursor: pointer;
             transition: all 0.2s;
         }
 
-        .input-mode-tab:hover {
-            color: #172B4D;
-            background: #F4F5F7;
+        .pattern-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
         }
 
-        .input-mode-tab.active {
-            color: #0052CC;
-            border-bottom-color: #0052CC;
-        }
-
-        .input-mode-content {
-            display: block;
-        }
-
-        .input-mode-content.hidden {
-            display: none;
+        .pattern-btn.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
         }
     </style>
 </head>
 
 <body>
     <!-- Sidebar -->
-    <div class="sidebar">
+    <aside class="sidebar">
         <div class="app-title">
-            <span>🔧 Requirement Analyzer</span>
+            <span>🔧</span>
+            <span>Requirement Analyzer</span>
         </div>
+
         <ul class="nav-menu">
             <li class="nav-item active" onclick="switchView('improvement')">
                 <span class="nav-icon">✨</span>
                 Improvement
             </li>
+            <li class="nav-item" onclick="switchView('history')">
+                <span class="nav-icon">📜</span>
+                History
+            </li>
+        </ul>
+
+        <ul class="nav-menu-bottom">
             <li class="nav-item" onclick="switchView('settings')">
                 <span class="nav-icon">⚙️</span>
                 Settings
             </li>
         </ul>
-    </div>
+    </aside>
 
-    <!-- Main Content -->
-    <div class="main-content">
-
+    <!-- Main Container -->
+    <div class="main-container">
         <!-- View: Improvement -->
         <div id="view-improvement" class="view-section active">
-            <div class="page-header">
-                <div class="breadcrumbs">Pages / Requirements</div>
+            <!-- Header -->
+            <header class="page-header">
+                <nav class="breadcrumbs">Pages / Requirements</nav>
                 <h1 class="page-title">Improve Requirement</h1>
-            </div>
+            </header>
 
-            <div class="page-body">
-                <!-- Configuration Warning -->
-                <div id="configWarning" class="hidden"
-                    style="background-color: #FFF0B3; border: 1px solid #FFC400; color: #172B4D; padding: 16px; border-radius: 4px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <strong>설정이 필요합니다</strong><br>
-                        <span style="font-size: 13px;">API 키와 프로젝트 설정을 완료해주세요.</span>
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Main Content -->
+                <main class="main-content">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <div class="tab active" onclick="switchInputMode('direct')">Direct Input</div>
+                        <div class="tab" onclick="switchInputMode('pattern')">Pattern Input</div>
                     </div>
-                    <button class="btn btn-secondary" onclick="switchView('settings')"
-                        style="background: white; border: 1px solid #DFE1E6;">설정하러 가기</button>
-                </div>
 
-                <!-- Input Mode Tabs -->
-                <div class="form-group">
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #DFE1E6;">
-                        <button id="tabDirectInput" class="input-mode-tab active" onclick="switchInputMode('direct')">
-                            Direct Input
-                        </button>
-                        <button id="tabPatternInput" class="input-mode-tab" onclick="switchInputMode('pattern')">
-                            Pattern Input
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Direct Input Mode -->
-                <div id="directInputMode" class="input-mode-content">
-                    <div class="form-group">
-                        <label class="label">Original Requirement Text</label>
-                        <textarea class="textarea-field" id="inputRequirementDirect"
-                            placeholder="Enter original requirement text here..."></textarea>
-                    </div>
-                </div>
-
-                <!-- Pattern Input Mode -->
-                <div id="patternInputMode" class="input-mode-content hidden">
-                    <!-- Project Context Fields (Auto-loaded from Settings) -->
-                    <div class="form-group"
-                        style="background: #F4F5F7; padding: 16px; border-radius: 4px; margin-bottom: 20px;">
-                        <h4 style="font-size: 14px; margin-bottom: 12px; color: #172B4D;">프로젝트 설정 (이번 요구사항에만 적용)</h4>
+                    <!-- Direct Input Mode -->
+                    <div id="directInputMode">
                         <div class="form-group">
-                            <label class="label">담당자 (담당부서)</label>
-                            <input type="text" class="input-field" id="patternDeveloper"
-                                placeholder="미 입력시 Settings에서 자동 로드">
+                            <label class="label" for="directRequirementInput">Original Requirement Text</label>
+                            <textarea class="textarea-field" id="directRequirementInput" rows="12"
+                                placeholder="Enter original requirement text here..."></textarea>
+                            <p style="font-size: 12px; color: #6B778C; text-align: right; margin-top: 4px;">0 characters
+                            </p>
                         </div>
+
                         <div class="form-group">
-                            <label class="label">System</label>
-                            <input type="text" class="input-field" id="patternSystem"
-                                placeholder="미 입력시 Settings에서 자동 로드">
-                        </div>
-                        <div class="form-group">
-                            <label class="label">Client</label>
-                            <input type="text" class="input-field" id="patternClient"
-                                placeholder="미 입력시 Settings에서 자동 로드">
+                            <button class="btn btn-primary" id="btnImprove" onclick="improveRequirement()">
+                                <span style="margin-right: 4px;">✨</span>
+                                Improve
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Original Text -->
-                    <div class="form-group">
-                        <label class="label">Original Requirement Text</label>
-                        <textarea class="textarea-field" id="inputRequirementPattern"
-                            placeholder="Enter original requirement text here..."></textarea>
-                    </div>
+                    <!-- Pattern Input Mode -->
+                    <div id="patternInputMode" class="hidden">
+                        <!-- Pattern Selector -->
+                        <div class="pattern-selector">
+                            <button class="pattern-btn active" onclick="selectPattern('ubiquitous')">Ubiquitous</button>
+                            <button class="pattern-btn" onclick="selectPattern('event-driven')">Event-Driven</button>
+                            <button class="pattern-btn" onclick="selectPattern('unwanted')">Unwanted Behavior</button>
+                            <button class="pattern-btn" onclick="selectPattern('state-driven')">State-Driven</button>
+                            <button class="pattern-btn" onclick="selectPattern('optional')">Optional Feature</button>
+                            <button class="pattern-btn" onclick="selectPattern('complex')">Complex</button>
+                        </div>
 
-                    <!-- Pattern Selection -->
-                    <div class="form-group">
-                        <label class="label">Pattern Type</label>
-                        <select class="select-field" id="patternSelect" onchange="updatePatternFields()">
-                            <option value="ubiquitous">Ubiquitous</option>
-                            <option value="event-driven">Event-Driven</option>
-                            <option value="unwanted">Unwanted Behavior</option>
-                            <option value="state-driven">State-Driven</option>
-                            <option value="optional">Optional</option>
-                            <option value="complex">Complex</option>
-                        </select>
-                    </div>
-
-                    <!-- Pattern Fields Container -->
-                    <div id="patternFieldsContainer">
-                        <!-- Ubiquitous Fields -->
-                        <div id="fields-ubiquitous" class="pattern-fields">
+                        <!-- Ubiquitous Pattern -->
+                        <div id="pattern-ubiquitous" class="pattern-section active">
+                            <div class="form-group">
+                                <label class="label">시스템 이름</label>
+                                <input type="text" class="input-field" id="field-system-name-ub"
+                                    placeholder="예: 차량 제어 시스템">
+                            </div>
                             <div class="form-group">
                                 <label class="label">시스템 응답</label>
-                                <input type="text" class="input-field" id="field-system-response"
-                                    placeholder="예: 데이터를 전송해야 한다">
+                                <input type="text" class="input-field" id="field-system-response-ub"
+                                    placeholder="예: 속도를 제한해야 한다">
                             </div>
                         </div>
 
-                        <!-- Event-Driven Fields -->
-                        <div id="fields-event-driven" class="pattern-fields hidden">
+                        <!-- Event-Driven Pattern -->
+                        <div id="pattern-event-driven" class="pattern-section">
                             <div class="form-group">
-                                <label class="label">선행 조건</label>
-                                <input type="text" class="input-field" id="field-precondition"
-                                    placeholder="예: 시스템이 활성화된 상태에서">
-                            </div>
-                            <div class="form-group">
-                                <label class="label">트리거 이벤트</label>
-                                <input type="text" class="input-field" id="field-trigger" placeholder="예: 사용자가 버튼을 누르면">
+                                <label class="label">트리거 조건</label>
+                                <input type="text" class="input-field" id="field-trigger-ed"
+                                    placeholder="예: 사용자가 버튼을 누르면">
                             </div>
                             <div class="form-group">
                                 <label class="label">시스템 응답</label>
                                 <input type="text" class="input-field" id="field-system-response-ed"
-                                    placeholder="예: 경고음을 울려야 한다">
+                                    placeholder="예: 경고음을 출력해야 한다">
                             </div>
                         </div>
 
-                        <!-- Unwanted Behavior Fields -->
-                        <div id="fields-unwanted" class="pattern-fields hidden">
+                        <!-- Unwanted Behavior Pattern -->
+                        <div id="pattern-unwanted" class="pattern-section">
                             <div class="form-group">
-                                <label class="label">선행 조건</label>
-                                <input type="text" class="input-field" id="field-precondition-uw"
-                                    placeholder="예: 정상 작동 중">
+                                <label class="label">트리거 조건</label>
+                                <input type="text" class="input-field" id="field-trigger-uw"
+                                    placeholder="예: 온도가 100도를 초과하면">
                             </div>
                             <div class="form-group">
-                                <label class="label">금지 동작</label>
-                                <input type="text" class="input-field" id="field-forbidden"
-                                    placeholder="예: 오류 메시지를 표시하지 않아야 한다">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response-uw"
+                                    placeholder="예: 냉각 시스템을 활성화해야 한다">
                             </div>
                         </div>
 
-                        <!-- State-Driven Fields -->
-                        <div id="fields-state-driven" class="pattern-fields hidden">
+                        <!-- State-Driven Pattern -->
+                        <div id="pattern-state-driven" class="pattern-section">
                             <div class="form-group">
-                                <label class="label">특정 조건</label>
-                                <input type="text" class="input-field" id="field-condition" placeholder="예: 대기 모드일 때">
+                                <label class="label">시스템 상태</label>
+                                <input type="text" class="input-field" id="field-state-sd" placeholder="예: 대기 모드일 때">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">트리거 조건</label>
+                                <input type="text" class="input-field" id="field-trigger-sd" placeholder="예: 신호를 수신하면">
                             </div>
                             <div class="form-group">
                                 <label class="label">시스템 응답</label>
                                 <input type="text" class="input-field" id="field-system-response-sd"
-                                    placeholder="예: 전력 소비를 최소화해야 한다">
+                                    placeholder="예: 활성 모드로 전환해야 한다">
                             </div>
                         </div>
 
-                        <!-- Optional Fields -->
-                        <div id="fields-optional" class="pattern-fields hidden">
+                        <!-- Optional Feature Pattern -->
+                        <div id="pattern-optional" class="pattern-section">
                             <div class="form-group">
-                                <label class="label">선택적 기능/조건</label>
-                                <input type="text" class="input-field" id="field-optional-feature"
-                                    placeholder="예: 사용자가 요청하는 경우">
+                                <label class="label">기능 조건</label>
+                                <input type="text" class="input-field" id="field-feature-condition-of"
+                                    placeholder="예: 사용자가 옵션을 활성화한 경우">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">트리거 조건</label>
+                                <input type="text" class="input-field" id="field-trigger-of"
+                                    placeholder="예: 특정 이벤트 발생 시">
                             </div>
                             <div class="form-group">
                                 <label class="label">시스템 응답</label>
-                                <input type="text" class="input-field" id="field-system-response-opt"
-                                    placeholder="예: 상세 로그를 제공할 수 있다">
+                                <input type="text" class="input-field" id="field-system-response-of"
+                                    placeholder="예: 알림을 표시해야 한다">
                             </div>
                         </div>
 
-                        <!-- Complex Fields -->
-                        <div id="fields-complex" class="pattern-fields hidden">
+                        <!-- Complex Pattern -->
+                        <div id="pattern-complex" class="pattern-section">
+                            <div class="form-group">
+                                <label class="label">시스템 상태</label>
+                                <input type="text" class="input-field" id="field-state-cx" placeholder="예: 주행 중일 때">
+                            </div>
                             <div class="form-group">
                                 <label class="label">선행 조건</label>
                                 <input type="text" class="input-field" id="field-precondition-cx"
-                                    placeholder="예: 초기화 완료 후">
+                                    placeholder="예: 배터리 잔량이 20% 이상이고">
                             </div>
                             <div class="form-group">
                                 <label class="label">트리거 이벤트</label>
@@ -707,181 +723,236 @@
                                     placeholder="예: 데이터를 처리하고 결과를 전송해야 한다">
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <button class="btn btn-primary" id="btnImprove" onclick="improveRequirement()">Improve</button>
-                </div>
-
-
-                <!-- Loading -->
-                <div id="loadingSection" class="hidden" style="text-align: center; padding: 40px;">
-                    <div class="loading-spinner"></div>
-                    <p style="color: #5E6C84; font-size: 14px;">AI is analyzing...</p>
-                </div>
-
-                <!-- Results -->
-                <div id="resultSection" class="hidden">
-                    <!-- Section 1: Score Comparison (2-column) -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        품질 점수 비교</h2>
-                    <div class="grid-2" style="margin-bottom: 40px;">
-                        <!-- Original Panel -->
-                        <div class="score-panel original">
-                            <div class="score-total">
-                                <div class="score-number" id="scoreOriginalTotal">0 / 320</div>
-                                <div class="score-percent" id="scoreOriginalPercent">0%</div>
-                            </div>
-                            <div id="categoryScoresOriginal">
-                                <!-- Dynamic category scores -->
-                            </div>
-                        </div>
-
-                        <!-- Improved Panel -->
-                        <div class="score-panel improved">
-                            <div class="score-total">
-                                <div class="score-number" id="scoreImprovedTotal">0 / 320</div>
-                                <div class="score-percent" id="scoreImprovedPercent">0%</div>
-                                <div class="score-delta" id="scoreDeltaText">+0점 (+0%)</div>
-                            </div>
-                            <div id="categoryScoresImproved">
-                                <!-- Dynamic category scores -->
-                            </div>
+                        <div class="form-group">
+                            <button class="btn btn-primary" onclick="improveRequirement()">
+                                <span style="margin-right: 4px;">✨</span>
+                                Improve
+                            </button>
                         </div>
                     </div>
 
-                    <!-- Section 2: Detailed Score Table -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        상세 점수 비교</h2>
-                    <div class="score-table-container" style="margin-bottom: 40px;">
-                        <table class="score-table">
-                            <thead>
-                                <tr>
-                                    <th>규칙</th>
-                                    <th>원본</th>
-                                    <th>개선</th>
-                                    <th>변화</th>
-                                </tr>
-                            </thead>
-                            <tbody id="detailedScoreTableBody">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
+                    <!-- Loading Section -->
+                    <div id="loadingSection" class="hidden" style="text-align: center; padding: 40px;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: #5E6C84; font-size: 14px;">AI is analyzing...</p>
                     </div>
 
-                    <!-- Section 3: Improved Requirements Cards -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        개선된 요구사항</h2>
-                    <div id="requirementCardsContainer" style="margin-bottom: 40px;">
-                        <!-- Dynamic requirement cards -->
-                    </div>
+                    <!-- Results Section -->
+                    <div id="resultSection" class="hidden">
+                        <!-- Score Comparison -->
+                        <h2
+                            style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
+                            품질 점수 비교
+                        </h2>
+                        <div class="grid-2" style="margin-bottom: 40px;">
+                            <!-- Original Panel -->
+                            <div class="score-panel original">
+                                <div class="score-total">
+                                    <div class="score-number" id="scoreOriginalTotal">0 / 320</div>
+                                    <div class="score-percent" id="scoreOriginalPercent">0%</div>
+                                </div>
+                                <div id="categoryScoresOriginal">
+                                    <!-- Dynamic category scores -->
+                                </div>
+                            </div>
 
-                    <!-- Section 4: Key Improvements -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        주요 개선 사항</h2>
-                    <div id="keyImprovementsList">
-                        <!-- Dynamic improvements -->
-                    </div>
+                            <!-- Improved Panel -->
+                            <div class="score-panel improved">
+                                <div class="score-total">
+                                    <div class="score-number" id="scoreImprovedTotal">0 / 320</div>
+                                    <div class="score-percent" id="scoreImprovedPercent">0%</div>
+                                    <div class="score-delta" id="scoreDeltaText">+0점 (+0%)</div>
+                                </div>
+                                <div id="categoryScoresImproved">
+                                    <!-- Dynamic category scores -->
+                                </div>
+                            </div>
+                        </div>
 
+                        <!-- Detailed Score Table -->
+                        <h2
+                            style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
+                            상세 점수 비교
+                        </h2>
+                        <div class="score-table-container" style="margin-bottom: 40px;">
+                            <table class="score-table">
+                                <thead>
+                                    <tr>
+                                        <th>규칙</th>
+                                        <th>원본</th>
+                                        <th>개선</th>
+                                        <th>변화</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailedScoreTableBody">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
 
-                    <!-- Section 6: Additional Recommendations -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #6554C0; color: white; border-radius: 4px; font-weight: 600; margin-top: 40px;">
-                        추가 개선 권장사항</h2>
-                    <div id="recommendationsList">
-                        <!-- Dynamic recommendations -->
+                        <!-- Improved Requirements Cards -->
+                        <h2
+                            style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
+                            개선된 요구사항
+                        </h2>
+                        <div id="requirementCardsContainer" style="margin-bottom: 40px;">
+                            <!-- Dynamic requirement cards -->
+                        </div>
+
+                        <!-- Key Improvements -->
+                        <h2
+                            style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
+                            주요 개선 사항
+                        </h2>
+                        <div id="keyImprovementsList">
+                            <!-- Dynamic improvements -->
+                        </div>
+
+                        <!-- Additional Recommendations -->
+                        <h2
+                            style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #6554C0; color: white; border-radius: 4px; font-weight: 600; margin-top: 40px;">
+                            추가 개선 권장사항
+                        </h2>
+                        <div id="recommendationsList">
+                            <!-- Dynamic recommendations -->
+                        </div>
                     </div>
-                </div>
+                </main>
+
+                <!-- Right Panel (Guide) -->
+                <aside class="right-panel">
+                    <h3 class="guide-title">
+                        <span style="margin-right: 8px;">📖</span>
+                        사양서 작성 가이드
+                    </h3>
+                    <p class="guide-description">
+                        Need help writing better requirements? Check out these guidelines to ensure quality and clarity.
+                    </p>
+
+                    <a href="#" class="guide-link">
+                        <div class="guide-link-title">📂 요구사항 분류</div>
+                        <div class="guide-link-desc">How to categorize effectively.</div>
+                    </a>
+
+                    <a href="#" class="guide-link">
+                        <div class="guide-link-title">📏 요구사항 특성 및 작성 규칙</div>
+                        <div class="guide-link-desc">Key characteristics and writing rules.</div>
+                    </a>
+
+                    <a href="#" class="guide-link">
+                        <div class="guide-link-title">✅ 요구사항 품질 체크 기준</div>
+                        <div class="guide-link-desc">Quality assurance checklist.</div>
+                    </a>
+
+                    <div
+                        style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #DFE1E6; text-align: center;">
+                        <a href="#"
+                            style="font-size: 12px; font-weight: 500; color: var(--primary-color); text-decoration: none;">
+                            View Full Documentation →
+                        </a>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- View: History (NEW) -->
+        <div id="view-history" class="view-section">
+            <header class="page-header">
+                <nav class="breadcrumbs">Pages / History</nav>
+                <h1 class="page-title">Requirement History</h1>
+            </header>
+
+            <div class="content-area">
+                <main class="main-content">
+                    <div class="panel panel-warning">
+                        <span class="panel-icon">🚧</span>
+                        <div>History feature coming soon...</div>
+                    </div>
+                </main>
             </div>
         </div>
 
         <!-- View: Settings -->
         <div id="view-settings" class="view-section">
-            <div class="page-header">
-                <div class="breadcrumbs">Pages / Configuration</div>
+            <header class="page-header">
+                <nav class="breadcrumbs">Pages / Configuration</nav>
                 <h1 class="page-title">Settings</h1>
-            </div>
+            </header>
 
-            <div class="page-body">
-                <div class="form-group">
-                    <label class="label">AI Provider</label>
-                    <select class="select-field" id="providerSelect" onchange="toggleApiKeyInputs()">
-                        <option value="openai">OpenAI (GPT-4o mini)</option>
-                        <option value="gemini">Google Gemini</option>
-                        <option value="claude">Anthropic Claude</option>
-                    </select>
-                </div>
+            <div class="content-area">
+                <main class="main-content">
+                    <div class="form-group">
+                        <label class="label">AI Provider</label>
+                        <select class="select-field" id="providerSelect" onchange="toggleApiKeyInputs()">
+                            <option value="openai">OpenAI</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="claude">Anthropic Claude</option>
+                        </select>
+                    </div>
 
-                <!-- OpenAI Inputs (URL + Key) -->
-                        <div id="openaiInputGroup" class="form-group">
-                            <label class="label">OpenAI Base URL (Optional - for Enterprise Gateway)</label>
-                            <input type="text" class="input-field" id="openaiUrlInput" placeholder="API URL을 입력해주세요.">
-                            <label class="label" style="margin-top: 10px;">OpenAI API Key</label>
-                            <input type="password" class="input-field" id="openaiKeyInput" placeholder="API 키를 입력해주세요.">
-                        </div>
+                    <!-- OpenAI Inputs -->
+                    <div id="openaiInputGroup" class="form-group">
+                        <label class="label">OpenAI API URL</label>
+                        <input type="text" class="input-field" id="openaiUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">API Key</label>
+                        <input type="password" class="input-field" id="openaiKeyInput" placeholder="API 키를 입력해주세요.">
+                    </div>
 
-                        <!-- Gemini Inputs (URL + Key) -->
-                        <div id="geminiInputGroup" class="form-group hidden">
-                            <label class="label">Gemini Base URL</label>
-                            <input type="text" class="input-field" id="geminiUrlInput" placeholder="API URL을 입력해주세요.">
-                            <label class="label" style="margin-top: 10px;">Gemini API Key</label>
-                            <input type="password" class="input-field" id="geminiKeyInput" placeholder="API 키를 입력해주세요.">
-                        </div>
+                    <!-- Gemini Inputs -->
+                    <div id="geminiInputGroup" class="form-group hidden">
+                        <label class="label">API URL</label>
+                        <input type="text" class="input-field" id="geminiUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">API Key</label>
+                        <input type="password" class="input-field" id="geminiKeyInput" placeholder="API 키를 입력해주세요.">
+                    </div>
 
-                        <!-- Claude Inputs (URL + Key) -->
-                        <div id="claudeInputGroup" class="form-group hidden">
-                            <label class="label">Claude Base URL (Optional - for Enterprise Gateway)</label>
-                            <input type="text" class="input-field" id="claudeUrlInput" placeholder="API URL을 입력해주세요.">
-                            <label class="label" style="margin-top: 10px;">Claude API Key</label>
-                            <input type="password" class="input-field" id="claudeKeyInput" placeholder="API 키를 입력해주세요.">
-                        </div>
+                    <!-- Claude Inputs -->
+                    <div id="claudeInputGroup" class="form-group hidden">
+                        <label class="label">API URL</label>
+                        <input type="text" class="input-field" id="claudeUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">Claude API Key</label>
+                        <input type="password" class="input-field" id="claudeKeyInput" placeholder="API 키를 입력해주세요.">
+                    </div>
 
-                        <!-- API Save/Reset Buttons -->
-                        <div class="form-group" style="display: flex; gap: 10px;">
-                            <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">Save API Key &
-                                Use</button>
-                            <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">Reset API
-                                Key</button>
-                        </div>
+                    <!-- API Save/Reset Buttons -->
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">Save API Key &
+                            Use</button>
+                        <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">Reset API
+                            Key</button>
+                    </div>
 
-                        <!-- Project Settings -->
-                        <div class="form-group"
-                            style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #DFE1E6;">
-                            <h3 style="font-size: 18px; margin-bottom: 10px; color: #172B4D;">프로젝트 설정 </h3>
-                            <p style="font-size: 13px; color: #6B778C; margin-bottom: 20px;">입력 시 AI 추론 정확도가 향상됩니다</p>
+                    <!-- Project Settings -->
+                    <div class="form-group" style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #DFE1E6;">
+                        <h3 style="font-size: 18px; margin-bottom: 10px; color: #172B4D;">프로젝트 설정</h3>
+                        <p style="font-size: 13px; color: #6B778C; margin-bottom: 20px;">입력 시 AI 추론 정확도가 향상됩니다</p>
 
-                            <label class="label">담당자 (협력사)</label>
-                            <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
+                        <label class="label">담당자 (협력사)</label>
+                        <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
 
-                            <label class="label" style="margin-top: 15px;">System (제어기명)</label>
-                            <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
+                        <label class="label" style="margin-top: 15px;">System (제어기명)</label>
+                        <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
 
-                            <label class="label" style="margin-top: 15px;">사양 담당자</label>
-                            <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
-                        </div>
+                        <label class="label" style="margin-top: 15px;">사양 담당자</label>
+                        <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
+                    </div>
 
-                </div>
+                    <!-- Configuration Save/Reset Buttons -->
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">Save Project
+                            Settings</button>
+                        <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">Reset Project
+                            Settings</button>
+                    </div>
 
-                <!-- Configuration Save/Reset Buttons -->
-                <div class="form-group" style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">Save Project
-                        Settings</button>
-                    <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">Reset Project
-                        Settings</button>
-                </div>
-
-                <div id="apiStatus" class="panel panel-warning">
-                    <span class="panel-icon">⚠️</span>
-                    <div>Please configure your API keys to use the application.</div>
-                </div>
+                    <div id="apiStatus" class="panel panel-warning">
+                        <span class="panel-icon">⚠️</span>
+                        <div>Please configure your API keys to use the application.</div>
+                    </div>
+                </main>
             </div>
         </div>
-
     </div>
 
     <script src="renderer.js"></script>
