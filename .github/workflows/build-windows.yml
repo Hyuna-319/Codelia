@@ -9,10 +9,6 @@ jobs:
   build-windows:
     runs-on: windows-latest
     
-    defaults:
-      run:
-        working-directory: Codelia
-    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -55,5 +51,5 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: windows-installer
-        path: Codelia/dist/*.exe
+        path: dist/*.exe
         retention-days: 30
