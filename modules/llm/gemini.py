@@ -13,8 +13,15 @@ class GeminiProvider(LLMProvider):
         if not self.base_url:
              raise ValueError("Gemini configuration requires a Base URL")
 
-        # Gateway-style URL with query parameter
-        url = f"{self.base_url}?key={self.api_key}"
+        # Smart URL construction: detect if it's Gateway or standard Gemini
+        base = self.base_url.rstrip('/')
+        
+        if '/models/' in base:
+            # Enterprise Gateway style (already has /models/ path)
+            url = f"{base}?key={self.api_key}"
+        else:
+            # Standard Google Gemini API (needs model endpoint appended)
+            url = f"{base}/models/{self.model}:generateContent?key={self.api_key}"
         
         headers = {
             'Content-Type': 'application/json'
@@ -35,4 +42,3 @@ class GeminiProvider(LLMProvider):
             return result['candidates'][0]['content']['parts'][0]['text']
         except requests.exceptions.RequestException as e:
             raise Exception(f"Gemini API 호출 실패: {str(e)}")
-
