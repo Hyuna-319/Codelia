@@ -9,12 +9,18 @@ class OpenAIProvider(LLMProvider):
         self.max_tokens = max_tokens
 
     def generate(self, system_prompt: str, user_message: str) -> str:
-        url = f"{self.base_url.rstrip('/')}/chat/completions"
-        
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.api_key}'
-        }
+        # Check if using Enterprise Gateway (query parameter style)
+        if '?key=' in self.base_url or self.base_url.startswith('https://h-chat-api'):
+            # Gateway style
+            url = f"{self.base_url}?key={self.api_key}" if '?key=' not in self.base_url else self.base_url
+            headers = {'Content-Type': 'application/json'}
+        else:
+            # Standard OpenAI API
+            url = f"{self.base_url.rstrip('/')}/chat/completions"
+            headers = {
+                'Content-Type': 'application/json',
+                'Authorization': f'Bearer {self.api_key}'
+            }
         
         payload = {
             "model": self.model,

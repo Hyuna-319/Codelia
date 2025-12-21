@@ -812,81 +812,73 @@
                     <label class="label">AI Provider</label>
                     <select class="select-field" id="providerSelect" onchange="toggleApiKeyInputs()">
                         <option value="openai">OpenAI (GPT-4o mini)</option>
-                        <option value="gemini">Google Gemini</option>
-                        <option value="claude">Anthropic Claude</option>
-                        <option value="enterprise_gateway">Enterprise Gateway</option>
-                    </select>
+                        <!-- OpenAI Inputs (URL + Key) -->
+                        <div id="openaiInputGroup" class="form-group">
+                            <label class="label">OpenAI Base URL (Optional - for Enterprise Gateway)</label>
+                            <input type="text" class="input-field" id="openaiUrlInput"
+                                placeholder="https://h-chat-api.autoever.com/v2/api/models/gpt-4o-mini:chatCompletions">
+                            <label class="label" style="margin-top: 10px;">OpenAI API Key</label>
+                            <input type="password" class="input-field" id="openaiKeyInput" placeholder="sk-...">
+                        </div>
+
+                        <!-- Gemini Inputs (URL + Key) -->
+                        <div id="geminiInputGroup" class="form-group hidden">
+                            <label class="label">Gemini Base URL</label>
+                            <input type="text" class="input-field" id="geminiUrlInput"
+                                placeholder="https://h-chat-api.autoever.com/v2/api/models/gemini-2.0-flash:generateContent">
+                            <label class="label" style="margin-top: 10px;">Gemini API Key</label>
+                            <input type="password" class="input-field" id="geminiKeyInput" placeholder="AIza...">
+                        </div>
+
+                        <!-- Claude Inputs (URL + Key) -->
+                        <div id="claudeInputGroup" class="form-group hidden">
+                            <label class="label">Claude Base URL (Optional - for Enterprise Gateway)</label>
+                            <input type="text" class="input-field" id="claudeUrlInput"
+                                placeholder="https://h-chat-api.autoever.com/v2/api/models/claude-3-sonnet:messages">
+                            <label class="label" style="margin-top: 10px;">Claude API Key</label>
+                            <input type="password" class="input-field" id="claudeKeyInput" placeholder="sk-ant-...">
+                        </div>
+
+                        <!-- API Save/Reset Buttons -->
+                        <div class="form-group" style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">Save API Key &
+                                Use</button>
+                            <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">Reset API
+                                Key</button>
+                        </div>
+
+                        <!-- Project Settings -->
+                        <div class="form-group"
+                            style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #DFE1E6;">
+                            <h3 style="font-size: 18px; margin-bottom: 10px; color: #172B4D;">프로젝트 설정 </h3>
+                            <p style="font-size: 13px; color: #6B778C; margin-bottom: 20px;">입력 시 AI 추론 정확도가 향상됩니다</p>
+
+                            <label class="label">담당자 (협력사)</label>
+                            <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
+
+                            <label class="label" style="margin-top: 15px;">System (제어기명)</label>
+                            <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
+
+                            <label class="label" style="margin-top: 15px;">사양 담당자</label>
+                            <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
+                        </div>
+
                 </div>
 
-                <!-- OpenAI Inputs (Key Only) -->
-                <div id="openaiInputGroup" class="form-group">
-                    <label class="label">OpenAI API Key</label>
-                    <input type="password" class="input-field" id="openaiKeyInput" placeholder="sk-...">
-                </div>
-
-                <!-- Gemini Inputs (URL + Key) -->
-                <div id="geminiInputGroup" class="form-group hidden">
-                    <label class="label">Gemini Base URL</label>
-                    <input type="text" class="input-field" id="geminiUrlInput"
-                        placeholder="https://generativelanguage.googleapis.com/v1beta">
-                    <label class="label" style="margin-top: 10px;">Gemini API Key</label>
-                    <input type="password" class="input-field" id="geminiKeyInput" placeholder="AIza...">
-                </div>
-
-                <!-- Claude Inputs (Key Only) -->
-                <div id="claudeInputGroup" class="form-group hidden">
-                    <label class="label">Claude API Key</label>
-                    <input type="password" class="input-field" id="claudeKeyInput" placeholder="sk-ant-...">
-                </div>
-
-                <!-- Enterprise Gateway Inputs (URL + Key) -->
-                <div id="enterpriseInputGroup" class="form-group hidden">
-                    <label class="label">Gateway URL</label>
-                    <input type="text" class="input-field" id="enterpriseUrlInput"
-                        placeholder="https://gateway.company.com/v1">
-                    <label class="label" style="margin-top: 10px;">API Key</label>
-                    <input type="password" class="input-field" id="enterpriseKeyInput"
-                        placeholder="Bearer Token or Key">
-                </div>
-
-                <!-- API Save/Reset Buttons -->
+                <!-- Configuration Save/Reset Buttons -->
                 <div class="form-group" style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">Save API Key &
-                        Use</button>
-                    <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">Reset API Key</button>
+                    <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">Save Project
+                        Settings</button>
+                    <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">Reset Project
+                        Settings</button>
                 </div>
 
-                <!-- Project Settings -->
-                <div class="form-group" style="margin-top: 40px; padding-top: 30px; border-top: 2px solid #DFE1E6;">
-                    <h3 style="font-size: 18px; margin-bottom: 10px; color: #172B4D;">프로젝트 설정 </h3>
-                    <p style="font-size: 13px; color: #6B778C; margin-bottom: 20px;">입력 시 AI 추론 정확도가 향상됩니다</p>
-
-                    <label class="label">담당자 (협력사)</label>
-                    <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
-
-                    <label class="label" style="margin-top: 15px;">System (제어기명)</label>
-                    <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
-
-                    <label class="label" style="margin-top: 15px;">사양 담당자</label>
-                    <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
+                <div id="apiStatus" class="panel panel-warning">
+                    <span class="panel-icon">⚠️</span>
+                    <div>Please configure your API keys to use the application.</div>
                 </div>
-
-            </div>
-
-            <!-- Configuration Save/Reset Buttons -->
-            <div class="form-group" style="display: flex; gap: 10px;">
-                <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">Save Project
-                    Settings</button>
-                <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">Reset Project
-                    Settings</button>
-            </div>
-
-            <div id="apiStatus" class="panel panel-warning">
-                <span class="panel-icon">⚠️</span>
-                <div>Please configure your API keys to use the application.</div>
             </div>
         </div>
-    </div>
 
     </div>
 

@@ -24,10 +24,9 @@ def get_config():
     import config as default_config
     return jsonify({
         'provider': cfg.get('provider', default_config.DEFAULT_PROVIDER),
-        'openai': cfg.get('openai', {'key': ''}),
+        'openai': cfg.get('openai', {'key': '', 'url': ''}),
         'gemini': cfg.get('gemini', {'key': '', 'url': ''}),
-        'claude': cfg.get('claude', {'key': ''}),
-        'enterprise_gateway': cfg.get('enterprise_gateway', {'key': '', 'url': ''}),
+        'claude': cfg.get('claude', {'key': '', 'url': ''}),
         'project': cfg.get('project', {})
     })
 

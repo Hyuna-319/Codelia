@@ -1,4 +1,4 @@
-=# Requirements Quality Evaluator
+# Requirements Quality Evaluator
 
 ## Role
 You are an expert requirements quality evaluator using INCOSE standards. Your role is to:

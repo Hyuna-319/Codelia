@@ -14,10 +14,6 @@ const claudeUrlInput = document.getElementById('claudeUrlInput');
 const openaiInputGroup = document.getElementById('openaiInputGroup');
 const geminiInputGroup = document.getElementById('geminiInputGroup');
 const claudeInputGroup = document.getElementById('claudeInputGroup');
-const enterpriseInputGroup = document.getElementById('enterpriseInputGroup');
-
-const enterpriseUrlInput = document.getElementById('enterpriseUrlInput');
-const enterpriseKeyInput = document.getElementById('enterpriseKeyInput');
 
 const apiStatus = document.getElementById('apiStatus');
 const btnImprove = document.getElementById('btnImprove');
@@ -81,7 +77,7 @@ async function checkConfiguration(redirect = false) {
         if (provider === 'openai') apiKey = data.openai?.key;
         else if (provider === 'gemini') apiKey = data.gemini?.key;
         else if (provider === 'claude') apiKey = data.claude?.key;
-        else if (provider === 'enterprise_gateway') apiKey = data.enterprise_gateway?.key;
+        // Enterprise gateway removed - each provider now handles Gateway URLs via base_url
 
         const hasApiKey = !!apiKey;
         const hasProjectContext = !!(project.developer && project.system && project.client);
@@ -199,7 +195,7 @@ function toggleApiKeyInputs() {
     openaiInputGroup.classList.toggle('hidden', provider !== 'openai');
     geminiInputGroup.classList.toggle('hidden', provider !== 'gemini');
     claudeInputGroup.classList.toggle('hidden', provider !== 'claude');
-    enterpriseInputGroup.classList.toggle('hidden', provider !== 'enterprise_gateway');
+    // Enterprise gateway removed
     updateApiStatus();
 }
 
@@ -212,6 +208,7 @@ async function loadConfig() {
 
 
         openaiKeyInput.value = data.openai?.key || '';
+        openaiUrlInput.value = data.openai?.url || '';
 
 
         geminiKeyInput.value = data.gemini?.key || '';
@@ -219,10 +216,10 @@ async function loadConfig() {
 
 
         claudeKeyInput.value = data.claude?.key || '';
+        claudeUrlInput.value = data.claude?.url || '';
 
 
-        enterpriseKeyInput.value = data.enterprise_gateway?.key || '';
-        enterpriseUrlInput.value = data.enterprise_gateway?.url || '';
+        // Enterprise gateway removed
 
 
         const project = data.project || {};
@@ -249,8 +246,7 @@ function updateApiStatus() {
         hasKey = !!geminiKeyInput.value && !!geminiUrlInput.value; // URL required
     } else if (provider === 'claude') {
         hasKey = !!claudeKeyInput.value;
-    } else if (provider === 'enterprise_gateway') {
-        hasKey = !!enterpriseKeyInput.value && !!enterpriseUrlInput.value; // URL required
+        // Enterprise gateway removed - validation handled per provider
     }
 
     if (hasKey) {
@@ -283,13 +279,16 @@ async function saveApiConfig() {
         const currentConfig = await response.json();
 
 
+        const configData = {
+            provider: providerSelect.value,
+            openai: { key: openaiKeyInput.value, url: openaiUrlInput.value },
+            gemini: { key: geminiKeyInput.value, url: geminiUrlInput.value },
+            claude: { key: claudeKeyInput.value, url: claudeUrlInput.value }
+        };
+
         const config = {
             ...currentConfig,
-            provider: providerSelect.value,
-            openai: { key: openaiKeyInput.value },
-            gemini: { key: geminiKeyInput.value, url: geminiUrlInput.value },
-            claude: { key: claudeKeyInput.value },
-            enterprise_gateway: { key: enterpriseKeyInput.value, url: enterpriseUrlInput.value }
+            ...configData
         };
 
         const saveResponse = await fetch(`${API_URL}/config`, {
@@ -323,14 +322,13 @@ async function resetApiConfig() {
 
     if (provider === 'openai') {
         openaiKeyInput.value = '';
+        openaiUrlInput.value = '';
     } else if (provider === 'gemini') {
         geminiKeyInput.value = '';
         geminiUrlInput.value = '';
     } else if (provider === 'claude') {
         claudeKeyInput.value = '';
-    } else if (provider === 'enterprise_gateway') {
-        enterpriseKeyInput.value = '';
-        enterpriseUrlInput.value = '';
+        claudeUrlInput.value = '';
     }
 
     await saveApiConfig();

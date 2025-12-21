@@ -13,15 +13,17 @@ class GeminiProvider(LLMProvider):
         if not self.base_url:
              raise ValueError("Gemini configuration requires a Base URL")
 
-        url = self.base_url
+        # Gateway-style URL with query parameter
+        url = f"{self.base_url}?key={self.api_key}"
         
         headers = {
-            'Content-Type': 'application/json',
-            'x-goog-api-key': self.api_key 
+            'Content-Type': 'application/json'
+            # Note: x-goog-api-key removed, using query parameter instead
         }
         
         payload = {
             "contents": [{
+                "role": "user",  # Required by Enterprise Gateway
                 "parts": [{"text": full_prompt}]
             }]
         }
@@ -33,3 +35,4 @@ class GeminiProvider(LLMProvider):
             return result['candidates'][0]['content']['parts'][0]['text']
         except requests.exceptions.RequestException as e:
             raise Exception(f"Gemini API 호출 실패: {str(e)}")
+
