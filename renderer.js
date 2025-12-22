@@ -36,14 +36,18 @@ function switchView(viewName) {
 // Input Mode Switching
 function switchInputMode(mode) {
     // Update tab buttons
-    const tabs = document.querySelectorAll('.tab');
-    tabs.forEach(tab => tab.classList.remove('active'));
-    if (mode === 'direct') tabs[0].classList.add('active');
-    if (mode === 'pattern') tabs[1].classList.add('active');
+    const tabDirect = document.getElementById('tabDirectInput');
+    const tabPattern = document.getElementById('tabPatternInput');
+
+    if (tabDirect) tabDirect.classList.toggle('active', mode === 'direct');
+    if (tabPattern) tabPattern.classList.toggle('active', mode === 'pattern');
 
     // Update content visibility
-    document.getElementById('directInputMode').classList.toggle('hidden', mode !== 'direct');
-    document.getElementById('patternInputMode').classList.toggle('hidden', mode !== 'pattern');
+    const directContent = document.getElementById('directInputMode');
+    const patternContent = document.getElementById('patternInputMode');
+
+    if (directContent) directContent.classList.toggle('hidden', mode !== 'direct');
+    if (patternContent) patternContent.classList.toggle('hidden', mode !== 'pattern');
 
     // Load project settings when switching to pattern mode
     if (mode === 'pattern') {
@@ -463,6 +467,12 @@ async function improveRequirement() {
         });
 
         const data = await response.json();
+
+        console.log('=== API RESPONSE DATA ===');
+        console.log('Full response:', data);
+        console.log('Original scores:', data.original_scores);
+        console.log('Improved scores:', data.improved_scores);
+        console.log('Explanations:', data.explanations);
 
         if (data.error) {
             alert('Error: ' + data.error);

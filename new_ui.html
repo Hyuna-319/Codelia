@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Panel - Two Level Tabs</title>
+    <style>
+        :root {
+            --primary-color: #0052CC;
+            --sidebar-bg: #F4F5F7;
+            --content-bg: #FFFFFF;
+            --text-color: #172B4D;
+            --border-color: #DFE1E6;
+            --hover-bg: #EBECF0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: var(--text-color);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background: #F4F5F7;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 10px;
+        }
+
+        .app-title {
+            font-size: 16px;
+            font-weight: 600;
+            padding: 0 10px 20px 10px;
+            color: #42526E;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 10px 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #42526E;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .nav-item.active {
+            background-color: #E6EFFC;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            margin-right: 10px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            background-color: var(--content-bg);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-header {
+            padding: 20px 40px;
+            border-bottom: 1px solid var(--border-color);
+            background: white;
+        }
+
+        .breadcrumbs {
+            font-size: 12px;
+            color: #6B778C;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 500;
+            color: #172B4D;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 20px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .page-body {
+            flex: 1;
+            max-width: 800px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5E6C84;
+            margin-bottom: 4px;
+        }
+
+        .textarea-field {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #DFE1E6;
+            border-radius: 3px;
+            font-size: 14px;
+            background-color: #FAFBFC;
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn-primary {
+            padding: 8px 16px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #0065FF;
+        }
+
+        /* 가이드 컨테이너 */
+        .guide-container {
+            width: 400px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 160px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 1차 탭 (메인) */
+        .guide-tabs-primary {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px 4px 0 0;
+            padding: 8px 8px 0 8px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .guide-tab-primary {
+            flex: 1;
+            padding: 10px 12px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+            font-size: 13px;
+            font-weight: 500;
+            color: #42526E;
+            background: #F4F5F7;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .guide-tab-primary:hover {
+            background: #EBECF0;
+        }
+
+        .guide-tab-primary.active {
+            background: white;
+            color: var(--primary-color);
+            border: 1px solid var(--border-color);
+            border-bottom: 2px solid white;
+            margin-bottom: -2px;
+            font-weight: 600;
+        }
+
+        .guide-tab-icon {
+            font-size: 18px;
+        }
+
+        .guide-tab-label {
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        /* 컨텐츠 래퍼 */
+        .guide-content-wrapper {
+            background: white;
+            border: 1px solid var(--border-color);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .guide-primary-content {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .guide-primary-content.active {
+            display: flex;
+        }
+
+        /* 2차 탭 */
+        .guide-tabs-secondary {
+            display: flex;
+            gap: 4px;
+            background: #F4F5F7;
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .guide-tab-secondary {
+            flex: 1;
+            padding: 8px 10px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #42526E;
+            background: white;
+            transition: all 0.2s;
+            border: 1px solid var(--border-color);
+        }
+
+        .guide-tab-secondary:hover {
+            background: #EBECF0;
+            border-color: #0052CC;
+        }
+
+        .guide-tab-secondary.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* 2차 탭 컨텐츠 */
+        .guide-secondary-content {
+            display: none;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 360px);
+        }
+
+        .guide-secondary-content.active {
+            display: block;
+        }
+
+        /* 컨텐츠 섹션 */
+        .content-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: #E6EFFC;
+            border-radius: 4px;
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .section-content {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #42526E;
+        }
+
+        .section-content p {
+            margin-bottom: 8px;
+        }
+
+        .section-content ul {
+            margin-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .section-content li {
+            margin-bottom: 4px;
+        }
+
+        /* 스크롤바 */
+        .guide-secondary-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .guide-secondary-content::-webkit-scrollbar-track {
+            background: #F4F5F7;
+        }
+
+        .guide-secondary-content::-webkit-scrollbar-thumb {
+            background: #DFE1E6;
+            border-radius: 3px;
+        }
+
+        .guide-secondary-content::-webkit-scrollbar-thumb:hover {
+            background: #C1C7D0;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="app-title">🔧 Requirement Analyzer</div>
+        <ul class="nav-menu">
+            <li class="nav-item active">
+                <span class="nav-icon">✨</span>
+                Improvement
+            </li>
+            <li class="nav-item">
+                <span class="nav-icon">🕒</span>
+                History
+            </li>
+        </ul>
+        <ul class="nav-menu" style="margin-top: auto;">
+            <li class="nav-item">
+                <span class="nav-icon">⚙️</span>
+                Settings
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <div class="breadcrumbs">Pages / Requirements</div>
+            <h1 class="page-title">Improve Requirement</h1>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- 왼쪽: 입력 영역 -->
+            <div class="page-body">
+                <div class="form-group">
+                    <label class="label">Original Requirement Text</label>
+                    <textarea class="textarea-field"
+                        placeholder="Enter original requirement text here...">시스템은 빠르게 동작해야 한다.</textarea>
+                </div>
+                <div class="form-group">
+                    <button class="btn-primary">Improve</button>
+                </div>
+
+                <div
+                    style="margin-top: 30px; padding: 16px; background: #DEEBFF; border-left: 4px solid #0052CC; border-radius: 3px;">
+                    <p style="font-size: 13px; color: #172B4D; line-height: 1.6;">
+                        <strong>💡 Tip:</strong> 오른쪽 가이드는 2단계 탭으로 구성되어 있습니다.<br>
+                        1차 탭 → 2차 탭을 선택하면 내용이 자동으로 표시됩니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- 오른쪽: 2단계 탭 가이드 -->
+            <div class="guide-container">
+                <!-- 1차 탭 -->
+                <div class="guide-tabs-primary">
+                    <div class="guide-tab-primary active" onclick="switchPrimaryTab('classification')">
+                        <span class="guide-tab-icon">📊</span>
+                        <span class="guide-tab-label">요구사항 분류</span>
+                    </div>
+                    <div class="guide-tab-primary" onclick="switchPrimaryTab('rules')">
+                        <span class="guide-tab-icon">✍️</span>
+                        <span class="guide-tab-label">작성 규칙</span>
+                    </div>
+                    <div class="guide-tab-primary" onclick="switchPrimaryTab('quality')">
+                        <span class="guide-tab-icon">✅</span>
+                        <span class="guide-tab-label">품질 체크</span>
+                    </div>
+                </div>
+
+                <div class="guide-content-wrapper">
+                    <!-- ===== 요구사항 분류 ===== -->
+                    <div id="primary-classification" class="guide-primary-content active">
+                        <!-- 2차 탭 -->
+                        <div class="guide-tabs-secondary">
+                            <div class="guide-tab-secondary active"
+                                onclick="switchSecondaryTab('classification', 'functional')">기능</div>
+                            <div class="guide-tab-secondary" onclick="switchSecondaryTab('classification', 'quality')">
+                                품질</div>
+                            <div class="guide-tab-secondary"
+                                onclick="switchSecondaryTab('classification', 'constraints')">제약</div>
+                        </div>
+
+                        <!-- 기능 요구사항 -->
+                        <div id="classification-functional" class="guide-secondary-content active">
+                            <div class="content-section">
+                                <div class="section-title">📋 정의 및 특징</div>
+                                <div class="section-content">
+                                    <p>[여기에 기능 요구사항의 정의 및 특징 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✍️ 작성 원칙</div>
+                                <div class="section-content">
+                                    <p>[여기에 기능 요구사항의 작성 원칙 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">💡 작성 예시</div>
+                                <div class="section-content">
+                                    <p>[여기에 기능 요구사항의 작성 예시가 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 품질 요구사항 -->
+                        <div id="classification-quality" class="guide-secondary-content">
+                            <div class="content-section">
+                                <div class="section-title">📋 정의 및 특징</div>
+                                <div class="section-content">
+                                    <p>[여기에 품질 요구사항의 정의 및 특징 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✍️ 작성 원칙</div>
+                                <div class="section-content">
+                                    <p>[여기에 품질 요구사항의 작성 원칙 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">💡 작성 예시</div>
+                                <div class="section-content">
+                                    <p>[여기에 품질 요구사항의 작성 예시가 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 제약 조건 -->
+                        <div id="classification-constraints" class="guide-secondary-content">
+                            <div class="content-section">
+                                <div class="section-title">📋 정의 및 특징</div>
+                                <div class="section-content">
+                                    <p>[여기에 제약 조건의 정의 및 특징 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✍️ 작성 원칙</div>
+                                <div class="section-content">
+                                    <p>[여기에 제약 조건의 작성 원칙 내용이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">💡 작성 예시</div>
+                                <div class="section-content">
+                                    <p>[여기에 제약 조건의 작성 예시가 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 작성 규칙 ===== -->
+                    <div id="primary-rules" class="guide-primary-content">
+                        <!-- 2차 탭 -->
+                        <div class="guide-tabs-secondary">
+                            <div class="guide-tab-secondary active" onclick="switchSecondaryTab('rules', 'ears')">EARS
+                                패턴</div>
+                            <div class="guide-tab-secondary" onclick="switchSecondaryTab('rules', 'principles')">작성 원칙
+                            </div>
+                        </div>
+
+                        <!-- EARS 패턴 -->
+                        <div id="rules-ears" class="guide-secondary-content active">
+                            <div class="content-section">
+                                <div class="section-title">📝 Ubiquitous</div>
+                                <div class="section-content">
+                                    <p>[여기에 Ubiquitous 패턴 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">📝 Event-driven</div>
+                                <div class="section-content">
+                                    <p>[여기에 Event-driven 패턴 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">📝 Unwanted behavior</div>
+                                <div class="section-content">
+                                    <p>[여기에 Unwanted behavior 패턴 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 작성 원칙 -->
+                        <div id="rules-principles" class="guide-secondary-content">
+                            <div class="content-section">
+                                <div class="section-title">✍️ Necessary (필수성)</div>
+                                <div class="section-content">
+                                    <p>[여기에 필수성 원칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✍️ Unambiguous (명확성)</div>
+                                <div class="section-content">
+                                    <p>[여기에 명확성 원칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✍️ Singular (단일성)</div>
+                                <div class="section-content">
+                                    <p>[여기에 단일성 원칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ===== 품질 체크 ===== -->
+                    <div id="primary-quality" class="guide-primary-content">
+                        <!-- 2차 탭 -->
+                        <div class="guide-tabs-secondary">
+                            <div class="guide-tab-secondary active"
+                                onclick="switchSecondaryTab('quality', 'characteristics')">특성 C1-C15</div>
+                            <div class="guide-tab-secondary" onclick="switchSecondaryTab('quality', 'writing-rules')">규칙
+                                R1-R42</div>
+                            <div class="guide-tab-secondary"
+                                onclick="switchSecondaryTab('quality', 'pattern-elements')">요소 P1-P7</div>
+                        </div>
+
+                        <!-- 특성 C1-C15 -->
+                        <div id="quality-characteristics" class="guide-secondary-content active">
+                            <div class="content-section">
+                                <div class="section-title">✅ C1: Necessary</div>
+                                <div class="section-content">
+                                    <p>[여기에 C1 특성 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✅ C3: Unambiguous</div>
+                                <div class="section-content">
+                                    <p>[여기에 C3 특성 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">✅ C5: Singular</div>
+                                <div class="section-content">
+                                    <p>[여기에 C5 특성 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 규칙 R1-R42 -->
+                        <div id="quality-writing-rules" class="guide-secondary-content">
+                            <div class="content-section">
+                                <div class="section-title">📋 R2: 능동형 문장</div>
+                                <div class="section-content">
+                                    <p>[여기에 R2 규칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">📋 R7: 모호한 용어</div>
+                                <div class="section-content">
+                                    <p>[여기에 R7 규칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">📋 R18: 단일 사고 문장</div>
+                                <div class="section-content">
+                                    <p>[여기에 R18 규칙 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 요소 P1-P7 -->
+                        <div id="quality-pattern-elements" class="guide-secondary-content">
+                            <div class="content-section">
+                                <div class="section-title">🔧 P1: 주어 (Entity)</div>
+                                <div class="section-content">
+                                    <p>[여기에 P1 요소 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">🔧 P2: 동사 (shall)</div>
+                                <div class="section-content">
+                                    <p>[여기에 P2 요소 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+
+                            <div class="content-section">
+                                <div class="section-title">🔧 P5: 성능 측정</div>
+                                <div class="section-content">
+                                    <p>[여기에 P5 요소 설명이 들어갑니다]</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1차 탭 전환
+        function switchPrimaryTab(tabName) {
+            // 모든 1차 탭 비활성화
+            document.querySelectorAll('.guide-tab-primary').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 모든 1차 컨텐츠 숨김
+            document.querySelectorAll('.guide-primary-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 선택된 탭 활성화
+            event.currentTarget.classList.add('active');
+
+            // 해당 컨텐츠 표시
+            document.getElementById('primary-' + tabName).classList.add('active');
+        }
+
+        // 2차 탭 전환
+        function switchSecondaryTab(primary, secondary) {
+            const parentId = 'primary-' + primary;
+            const parent = document.getElementById(parentId);
+
+            // 해당 부모의 모든 2차 탭 비활성화
+            parent.querySelectorAll('.guide-tab-secondary').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // 해당 부모의 모든 2차 컨텐츠 숨김
+            parent.querySelectorAll('.guide-secondary-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // 선택된 탭 활성화
+            event.currentTarget.classList.add('active');
+
+            // 해당 컨텐츠 표시
+            const contentId = primary + '-' + secondary;
+            document.getElementById(contentId).classList.add('active');
+        }
+    </script>
+</body>
+
+</html>
