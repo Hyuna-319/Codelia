@@ -36,9 +36,16 @@
 }
 
 .input-tab.active {
-    background: var(--primary-blue);
+    background: var(--primary-navy);
     color: var(--text-white);
-    border-color: var(--primary-blue);
+    border-color: var(--primary-navy);
+}
+
+.input-tab.active[data-tab="settings"] {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-medium);
+    border-bottom: none;
 }
 
 /* Tab Content */
@@ -118,12 +125,12 @@
 }
 
 .btn-primary {
-    background: var(--primary-light);
+    background: var(--primary-navy);
     color: var(--text-white);
 }
 
 .btn-primary:hover {
-    background: var(--primary-blue);
+    background: var(--primary-light);
 }
 
 .btn-primary:disabled {

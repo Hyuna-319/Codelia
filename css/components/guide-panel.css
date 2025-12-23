@@ -109,8 +109,8 @@
 .settings-btn {
     width: 100%;
     padding: var(--spacing-md);
-    background: var(--primary-blue);
-    color: var(--text-white);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
     border: none;
     border-radius: var(--radius-md);
     font-size: 13px;
@@ -120,11 +120,12 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm);
-    transition: background var(--transition-normal);
+    transition: all var(--transition-normal);
 }
 
 .settings-btn:hover {
-    background: var(--primary-navy);
+    background: var(--bg-hover);
+    color: var(--text-primary);
 }
 
 /* Slide Panel */
