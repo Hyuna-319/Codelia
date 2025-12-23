@@ -130,14 +130,14 @@
 /* Slide Panel */
 .slide-panel {
     position: fixed;
-    left: 0;
+    right: 0;
     top: 60px;
     width: 450px;
     height: calc(100vh - 60px);
     background: var(--bg-primary);
     box-shadow: var(--shadow-lg);
     z-index: 100;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition: transform var(--transition-slow);
     display: flex;
     flex-direction: column;

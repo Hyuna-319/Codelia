@@ -2,7 +2,6 @@
 export class SlidePanel {
     constructor() {
         this.panel = null;
-        this.isOpen = false;
         this.init();
     }
 
@@ -24,7 +23,7 @@ export class SlidePanel {
 
         // ESC key to close
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && this.isOpen) {
+            if (e.key === 'Escape' && this.isOpen()) {
                 this.close();
             }
         });
@@ -34,11 +33,15 @@ export class SlidePanel {
         document.getElementById('slidePanelTitle').innerHTML = title;
         document.getElementById('slidePanelContent').innerHTML = content;
         this.panel.classList.add('open');
-        this.isOpen = true;
     }
 
     close() {
-        this.panel.classList.remove('open');
-        this.isOpen = false;
+        if (this.panel) {
+            this.panel.classList.remove('open');
+        }
+    }
+
+    isOpen() {
+        return this.panel && this.panel.classList.contains('open');
     }
 }

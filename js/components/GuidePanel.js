@@ -13,7 +13,9 @@ export class GuidePanel {
   constructor(container) {
     this.container = container;
     this.slidePanel = new SlidePanel();
+    this.guideData = {};
     this.searchTerm = '';
+    this.currentOpenItem = null;
     this.init();
   }
 
@@ -53,12 +55,17 @@ export class GuidePanel {
   }
 
   renderTreeSection(title, items) {
-    const itemsHtml = items.map((item, index) => `
-      <div class="tree-item" data-item='${JSON.stringify(item).replace(/'/g, "&apos;")}'>
-        <span class="icon">${item.icon}</span>
-        <span>${item.label}</span>
-      </div>
-    `).join('');
+    const itemsHtml = items.map((item, index) => {
+      const dataId = `${title}-${index}`;
+      this.guideData[dataId] = item.data; // Store data for later access
+
+      return `
+        <div class="tree-item" data-id="${dataId}">
+          <span class="icon">${item.icon}</span>
+          <span>${item.label}</span>
+        </div>
+      `;
+    }).join('');
 
     return `
       <div class="tree-section">
@@ -85,13 +92,26 @@ export class GuidePanel {
     // Tree item click - open slide panel
     this.container.querySelectorAll('.tree-item').forEach(item => {
       item.addEventListener('click', (e) => {
-        const dataStr = e.currentTarget.getAttribute('data-item');
-        const data = JSON.parse(dataStr);
-        this.openSlidePanel(data.data);
+        const dataId = e.currentTarget.getAttribute('data-id');
+        const data = this.guideData[dataId];
 
-        // Update active state
-        this.container.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
-        e.currentTarget.classList.add('active');
+        if (data) {
+          // Check if clicking the same item that's currently open
+          if (this.currentOpenItem === dataId && this.slidePanel.isOpen()) {
+            // Close the panel if same item clicked again
+            this.slidePanel.close();
+            this.currentOpenItem = null;
+            e.currentTarget.classList.remove('active'); // Deactivate the item
+          } else {
+            // Open the panel with new content
+            this.openSlidePanel(data);
+            this.currentOpenItem = dataId;
+
+            // Update active state
+            this.container.querySelectorAll('.tree-item').forEach(i => i.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+          }
+        }
       });
     });
 
@@ -104,8 +124,8 @@ export class GuidePanel {
     }
   }
 
-  openSlidePanel(data) {
-    const contentHtml = data.sections.map(section => `
+  openSlidePanel(guideData) {
+    const contentHtml = guideData.sections.map(section => `
       <div class="slide-section">
         <div class="slide-section-title ${section.color}">
           ${section.title}
@@ -116,7 +136,7 @@ export class GuidePanel {
       </div>
     `).join('');
 
-    this.slidePanel.open(data.title, contentHtml);
+    this.slidePanel.open(guideData.title, contentHtml);
   }
 
   filterTree() {
