@@ -1,5 +1,8 @@
 """
-AI API 호출
+AI Client - AI 제공자 통합 인터페이스
+- OpenAI, Gemini, Claude 등 다양한 AI 제공자를 통합 관리
+- LLM Factory 패턴으로 Provider별 구현체 생성
+- 프롬프트 파일 로드 및 AI 호출 추상화
 """
 import os
 from typing import Dict, Any

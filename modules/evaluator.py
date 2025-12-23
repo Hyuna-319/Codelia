@@ -1,5 +1,8 @@
 """
-점수 평가 
+Requirement Evaluator - 요구사항 품질 평가
+- INCOSE 기준 64개 규칙(P1-P7, C1-C15, R1-R42)으로 요구사항 평가
+- AI에게 scoring_criteria.md 프롬프트를 전달하여 점수 산출
+- 원본과 개선본의 점수 비교 및 분석
 """
 from typing import Dict, List
 from .ai_client import AIClient

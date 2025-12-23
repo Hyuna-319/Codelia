@@ -1,3 +1,9 @@
+"""
+Config Service - 설정 관리 서비스
+- API 키 및 프로젝트 설정을 파일(config.json)에 저장/로드
+- AI Provider 설정 관리 (OpenAI, Gemini, Claude)
+- 프로젝트 컨텍스트 정보 관리 (Developer, System, Client)
+"""
 import json
 from pathlib import Path
 import config

@@ -1,3 +1,10 @@
+"""
+Flask API Server - 백엔드 진입점
+- 프론트엔드와 통신하는 REST API 엔드포인트 제공
+- /api/config: 설정 관리 (GET/POST)
+- /api/evaluate: 요구사항 평가
+- /api/improve: 요구사항 개선
+"""
 import sys
 import io
 
@@ -20,7 +27,7 @@ analysis_service = AnalysisService(config_service)
 @app.route('/api/config', methods=['GET'])
 def get_config():
     cfg = config_service.load_config()
-    # Ensure default structure for frontend
+
     import config as default_config
     return jsonify({
         'provider': cfg.get('provider', default_config.DEFAULT_PROVIDER),

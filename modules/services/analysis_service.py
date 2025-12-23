@@ -1,3 +1,9 @@
+"""
+Analysis Service - 비즈니스 로직 계층
+- 요구사항 평가 및 개선의 핵심 로직 담당
+- AI Client, Evaluator, Improver를 조합하여 전체 워크플로우 관리
+- 프로젝트 컨텍스트 주입 및 점수 비교 처리
+"""
 from modules import AIClient, RequirementImprover, RequirementEvaluator
 import config
 

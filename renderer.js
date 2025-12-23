@@ -220,7 +220,7 @@ function updateApiStatus() {
         hasKey = !!geminiKeyInput.value && !!geminiUrlInput.value; // URL required
     } else if (provider === 'claude') {
         hasKey = !!claudeKeyInput.value;
-        // Enterprise gateway removed - validation handled per provider
+
     }
 
     if (hasKey) {
@@ -336,7 +336,7 @@ window.saveProjectConfig = async function saveProjectConfig() {
 
         if (saveResponse.ok) {
             setApiStatus('success', '프로젝트 설정이 저장되었습니다.');
-            alert('프로젝트 설정이 성공적으로 저장되었습니다!'); // Confirmation alert
+            alert('프로젝트 설정이 성공적으로 저장되었습니다!');
             await checkConfiguration();
         } else {
             setApiStatus('error', '프로젝트 설정 저장 실패');

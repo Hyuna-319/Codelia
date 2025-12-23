@@ -1,4 +1,10 @@
 
+"""
+Configuration - 전역 설정 상수
+- 프롬프트 파일 경로 정의
+- 기본 AI Provider 설정
+- 설정 파일 경로 관리
+"""
 import os
 import sys
 from pathlib import Path

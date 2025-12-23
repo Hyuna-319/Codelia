@@ -1,5 +1,8 @@
 """
-요구사항 개선 로직
+Requirement Improver - 요구사항 개선
+- AI를 활용하여 요구사항의 품질을 개선
+- EARS 패턴(Ubiquitous, Event-Driven 등) 적용
+- Quality.md 프롬프트 기반으로 개선된 요구사항 생성
 """
 from typing import Dict, List
 from .ai_client import AIClient
