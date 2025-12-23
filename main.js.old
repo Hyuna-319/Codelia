@@ -220,10 +220,6 @@ async function improveRequirement() {
         ? dom.getElementById('inputRequirementDirect').value
         : dom.getElementById('inputRequirementPattern').value;
 
-    const parentId = isDirectMode
-        ? dom.getElementById('parentIdDirect')?.value.trim()
-        : dom.getElementById('parentIdPattern')?.value.trim();
-
     if (!text) {
         alert('Please enter a requirement.');
         return;
@@ -238,7 +234,7 @@ async function improveRequirement() {
         if (data.error) {
             alert('Error: ' + data.error);
         } else {
-            ResultDisplay.displayResult(data, parentId);
+            ResultDisplay.displayResult(data);
         }
     } catch (error) {
         alert('Error connecting to server: ' + error.message);
@@ -297,48 +293,8 @@ window.switchInputTab = switchInputTab;
 window.checkConfiguration = checkConfiguration;
 
 // Compatibility with HistoryPanel
-window.addToHistory = (original, improved, originalScore, improvedScore, parentId = '', fullData = null) => {
+window.addToHistory = (original, improved, originalScore, improvedScore) => {
     if (window.historyPanel) {
-        window.historyPanel.addHistoryItem(original, improved, originalScore, improvedScore, parentId, fullData);
+        window.historyPanel.addHistoryItem(original, improved, originalScore, improvedScore);
     }
-};
-
-window.loadHistoryResult = (item) => {
-    // 1. Fill input fields
-    const directText = dom.getElementById('inputRequirementDirect');
-    const directParent = dom.getElementById('parentIdDirect');
-    if (directText) directText.value = item.original || '';
-    if (directParent) directParent.value = item.parentId || '';
-
-    const patternText = dom.getElementById('inputRequirementPattern');
-    const patternParent = dom.getElementById('parentIdPattern');
-    if (patternText) patternText.value = item.original || '';
-    if (patternParent) patternParent.value = item.parentId || '';
-
-    // 2. Switch tab
-    switchInputTab('direct');
-
-    // 3. Restore results if full data exists
-    if (item.fullData) {
-        ResultDisplay.displayResult(item.fullData, item.parentId);
-        // Scroll to results
-        const resultSection = dom.getElementById('resultSection');
-        if (resultSection) {
-            resultSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    } else {
-        // Legacy history fallback: just show the improved text
-        // (This handles items saved before this update)
-        const resultSection = dom.getElementById('resultSection');
-        if (resultSection) resultSection.classList.remove('hidden');
-        ResultDisplay.displayRequirementCards(item.improved, item.parentId);
-    }
-};
-
-window.exportToExcel = () => {
-    alert('Excel 내보내기 기능이 곧 구현될 예정입니다.');
-};
-
-window.exportToWord = () => {
-    alert('Word 내보내기 기능이 곧 구현될 예정입니다.');
 };

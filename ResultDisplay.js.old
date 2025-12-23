@@ -9,9 +9,8 @@ export class ResultDisplay {
     /**
      * Main entry point to display results.
      * @param {Object} data - The API response data.
-     * @param {string} parentId - The parent requirement ID entered by user.
      */
-    static displayResult(data, parentId = '') {
+    static displayResult(data) {
         const resultSection = getElementById('resultSection');
         if (resultSection) resultSection.classList.remove('hidden');
 
@@ -22,13 +21,13 @@ export class ResultDisplay {
         this.displayDetailedScoreTable(data.original_scores, data.improved_scores);
 
         // 3. Improved Requirements Cards
-        this.displayRequirementCards(data.improved_result.improved, parentId);
+        this.displayRequirementCards(data.improved_result.improved);
 
         // 4. Key Improvements 
         this.displayTopImprovements(data.original_scores, data.improved_scores, data.explanations || [], data.improved_result.improved);
 
         // 5. Add to history
-        this.triggerAddToHistory(data, parentId);
+        this.triggerAddToHistory(data);
     }
 
     /**
@@ -130,27 +129,9 @@ export class ResultDisplay {
     }
 
     /**
-     * Helper to generate sub-requirement IDs.
-     * E.g., parent "REQ-001" -> "REQ-001-001", "REQ-001-002"
-     */
-    static generateSubId(parentId, sequenceNumber) {
-        if (!parentId) return null;
-
-        // Find the last numeric group in the parent ID to determine padding
-        const numericMatches = parentId.match(/\d+/g);
-        let padding = 2; // Default
-        if (numericMatches && numericMatches.length > 0) {
-            padding = numericMatches[numericMatches.length - 1].length;
-        }
-
-        const subNumber = String(sequenceNumber).padStart(padding, '0');
-        return `${parentId}-${subNumber}`;
-    }
-
-    /**
      * Displays the improved requirement cards.
      */
-    static displayRequirementCards(fullText, parentId = '') {
+    static displayRequirementCards(fullText) {
         const container = getElementById('requirementCardsContainer');
         if (!container) return;
         container.innerHTML = '';
@@ -174,21 +155,17 @@ export class ResultDisplay {
 
             if (fallbackMatches.length > 0) {
                 fallbackMatches.forEach((m, i) => {
-                    const seq = i + 1;
-                    const subId = this.generateSubId(parentId, seq);
-                    this.createReqCard(container, seq, m[1].trim(), null, subId);
+                    this.createReqCard(container, i + 1, m[1].trim(), null);
                 });
             } else {
-                const subId = this.generateSubId(parentId, 1);
-                this.createReqCard(container, 1, improvedSection, null, subId);
+                this.createReqCard(container, 1, improvedSection, null);
             }
         } else {
             reqMatches.forEach((m) => {
                 const number = parseInt(m[1]);
                 const pattern = m[2].trim();
                 const text = m[3].trim();
-                const subId = this.generateSubId(parentId, number);
-                this.createReqCard(container, number, text, pattern, subId);
+                this.createReqCard(container, number, text, pattern);
             });
         }
     }
@@ -196,7 +173,7 @@ export class ResultDisplay {
     /**
      * Creates and appends a requirement card to the container.
      */
-    static createReqCard(container, number, text, pattern, subId) {
+    static createReqCard(container, number, text, pattern) {
         const div = document.createElement('div');
         div.className = 'req-card';
 
@@ -205,11 +182,9 @@ export class ResultDisplay {
             patternBadge = `<span style="background: #E3FCEF; color: #006644; padding: 4px 8px; border-radius: 3px; font-size: 11px; font-weight: 600; margin-left: 8px;">Pattern: ${pattern}</span>`;
         }
 
-        const idDisplay = subId ? `<span style="color: #6B778C; font-size: 11px; font-weight: 600; margin-right: 8px;">${subId}</span>` : '';
-
         div.innerHTML = `
             <div class="req-card-header">
-                ${idDisplay}<span class="req-number-badge">요구사항 ${number}</span>${patternBadge}
+                <span class="req-number-badge">요구사항 ${number}</span>${patternBadge}
             </div>
             <div class="req-text">${text.replace(/\n/g, '<br>')}</div>
         `;
@@ -314,10 +289,8 @@ export class ResultDisplay {
 
     /**
      * Triggers the history update in the main window.
-     * @param {Object} data - The API response data.
-     * @param {string} parentId - The parent requirement ID.
      */
-    static triggerAddToHistory(data, parentId = '') {
+    static triggerAddToHistory(data) {
         const directTab = getElementById('tab-direct');
         const isDirectMode = directTab && !directTab.classList.contains('hidden');
         const originalText = isDirectMode
@@ -329,9 +302,7 @@ export class ResultDisplay {
                 originalText,
                 data.improved_result.improved,
                 data.original_scores.total,
-                data.improved_scores.total,
-                parentId,
-                data
+                data.improved_scores.total
             );
         }
     }
