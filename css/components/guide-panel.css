@@ -1,0 +1,288 @@
+/* Guide Panel - Left Side */
+
+.guide-panel {
+    width: 250px;
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-light);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.guide-header {
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border-light);
+    background: var(--bg-primary);
+}
+
+.guide-header h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+/* Tree Navigation */
+.guide-tree {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-sm);
+}
+
+.tree-section {
+    margin-bottom: var(--spacing-sm);
+}
+
+.tree-section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+    transition: background var(--transition-fast);
+    user-select: none;
+}
+
+.tree-section-header:hover {
+    background: var(--bg-hover);
+}
+
+.tree-section-header .icon {
+    font-size: 14px;
+    transition: transform var(--transition-fast);
+}
+
+.tree-section.collapsed .tree-section-header .icon {
+    transform: rotate(-90deg);
+}
+
+.tree-section-content {
+    padding-left: var(--spacing-lg);
+    margin-top: var(--spacing-xs);
+}
+
+.tree-section.collapsed .tree-section-content {
+    display: none;
+}
+
+.tree-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) var(--spacing-md);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    color: var(--text-secondary);
+    transition: all var(--transition-fast);
+    margin-bottom: 2px;
+}
+
+.tree-item:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.tree-item.active {
+    background: var(--primary-light);
+    color: var(--text-white);
+}
+
+.tree-item .icon {
+    font-size: 14px;
+}
+
+/* Settings Button */
+.guide-footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--border-light);
+    background: var(--bg-primary);
+}
+
+.settings-btn {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--primary-blue);
+    color: var(--text-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    transition: background var(--transition-normal);
+}
+
+.settings-btn:hover {
+    background: var(--primary-navy);
+}
+
+/* Slide Panel */
+.slide-panel {
+    position: fixed;
+    left: 0;
+    top: 60px;
+    width: 450px;
+    height: calc(100vh - 60px);
+    background: var(--bg-primary);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform var(--transition-slow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.slide-panel.open {
+    transform: translateX(0);
+}
+
+.slide-panel-header {
+    background: var(--primary-blue);
+    color: var(--text-white);
+    padding: var(--spacing-md) var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--primary-navy);
+}
+
+.slide-panel-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.slide-panel-close {
+    background: var(--accent-danger);
+    color: var(--text-white);
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity var(--transition-fast);
+}
+
+.slide-panel-close:hover {
+    opacity: 0.8;
+}
+
+.slide-panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-lg);
+}
+
+.slide-section {
+    margin-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-xl);
+    border-bottom: 1px solid var(--border-light);
+}
+
+.slide-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.slide-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: var(--spacing-md);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.slide-section-title.blue {
+    background: rgba(65, 130, 206, 0.15);
+    color: var(--primary-blue);
+    border-left: 3px solid var(--primary-light);
+}
+
+.slide-section-title.green {
+    background: rgba(56, 161, 105, 0.15);
+    color: var(--accent-success);
+    border-left: 3px solid var(--accent-success);
+}
+
+.slide-section-title.yellow {
+    background: rgba(214, 158, 46, 0.15);
+    color: var(--accent-warning);
+    border-left: 3px solid var(--accent-warning);
+}
+
+.slide-section-title.purple {
+    background: rgba(128, 90, 213, 0.15);
+    color: var(--accent-purple);
+    border-left: 3px solid var(--accent-purple);
+}
+
+.slide-section-content {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.slide-section-content p {
+    margin-bottom: var(--spacing-md);
+}
+
+.slide-section-content ul,
+.slide-section-content ol {
+    margin-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+.slide-section-content li {
+    margin-bottom: var(--spacing-sm);
+}
+
+.slide-section-content strong {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.slide-section-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: var(--spacing-md) 0;
+    font-size: 12px;
+}
+
+.slide-section-content table th,
+.slide-section-content table td {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-light);
+    text-align: left;
+}
+
+.slide-section-content table th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.slide-section-content table tr:hover {
+    background: var(--bg-secondary);
+}

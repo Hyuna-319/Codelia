@@ -21,37 +21,12 @@ const btnImprove = document.getElementById('btnImprove');
 const loadingSection = document.getElementById('loadingSection');
 const resultSection = document.getElementById('resultSection');
 
-// Navigation
-function switchView(viewName) {
-    document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-    document.getElementById(`view-${viewName}`).classList.add('active');
-
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => item.classList.remove('active'));
-    if (viewName === 'improvement') navItems[0].classList.add('active');
-    if (viewName === 'history') navItems[1].classList.add('active');
-    if (viewName === 'settings') navItems[2].classList.add('active');
-}
-
-// Input Mode Switching
+// Note: Tab switching is now handled by switchInputTab() in main.js
+// This function is kept for backward compatibility but not used
 function switchInputMode(mode) {
-    // Update tab buttons
-    const tabDirect = document.getElementById('tabDirectInput');
-    const tabPattern = document.getElementById('tabPatternInput');
-
-    if (tabDirect) tabDirect.classList.toggle('active', mode === 'direct');
-    if (tabPattern) tabPattern.classList.toggle('active', mode === 'pattern');
-
-    // Update content visibility
-    const directContent = document.getElementById('directInputMode');
-    const patternContent = document.getElementById('patternInputMode');
-
-    if (directContent) directContent.classList.toggle('hidden', mode !== 'direct');
-    if (patternContent) patternContent.classList.toggle('hidden', mode !== 'pattern');
-
-    // Load project settings when switching to pattern mode
-    if (mode === 'pattern') {
-        loadProjectSettingsToPattern();
+    // Deprecated - use switchInputTab() instead
+    if (window.switchInputTab) {
+        window.switchInputTab(mode);
     }
 }
 
@@ -71,12 +46,11 @@ async function loadProjectSettingsToPattern() {
 }
 
 // Check configuration and update UI state
-async function checkConfiguration(redirect = false) {
+window.checkConfiguration = async function checkConfiguration(redirect = false) {
     try {
         const response = await fetch(`${API_URL}/config`);
         const data = await response.json();
         const project = data.project || {};
-
 
         const provider = data.provider || 'openai';
         let apiKey = '';
@@ -84,25 +58,19 @@ async function checkConfiguration(redirect = false) {
         if (provider === 'openai') apiKey = data.openai?.key;
         else if (provider === 'gemini') apiKey = data.gemini?.key;
         else if (provider === 'claude') apiKey = data.claude?.key;
-        // Enterprise gateway removed - each provider now handles Gateway URLs via base_url
 
         const hasApiKey = !!apiKey;
         const hasProjectContext = !!(project.developer && project.system && project.client);
-
-
         const isValid = hasApiKey && hasProjectContext;
 
         console.log('Config Check:', { isValid, hasApiKey, hasProjectContext, project });
 
-
         const warningEl = document.getElementById('configWarning');
-        const improvementView = document.getElementById('view-improvement');
+        if (!warningEl) return isValid;
 
-
-        const interactiveElements = improvementView.querySelectorAll('input, textarea, select, button');
-
-
-        const warningBtn = warningEl.querySelector('button');
+        // Get all interactive elements in Direct Input tab
+        const directTab = document.getElementById('tab-direct');
+        const interactiveElements = directTab ? directTab.querySelectorAll('input, textarea, select, button') : [];
 
         if (!isValid) {
             // Show warning
@@ -111,22 +79,19 @@ async function checkConfiguration(redirect = false) {
 
             // Disable inputs
             interactiveElements.forEach(el => {
-                if (el !== warningBtn) {
+                if (!el.closest('#configWarning')) {
                     el.disabled = true;
                     el.style.opacity = '0.5';
                     if (el.tagName === 'BUTTON') el.style.cursor = 'not-allowed';
                 }
             });
 
-
-            if (redirect) {
-                switchView('settings');
+            if (redirect && window.switchInputTab) {
+                window.switchInputTab('settings');
             }
         } else {
-
             warningEl.classList.add('hidden');
             warningEl.style.display = 'none';
-
 
             interactiveElements.forEach(el => {
                 el.disabled = false;
@@ -143,7 +108,8 @@ async function checkConfiguration(redirect = false) {
 }
 
 
-function updatePatternFields() {
+// Make updatePatternFields global for onclick handler
+window.updatePatternFields = function updatePatternFields() {
     const pattern = document.getElementById('patternSelect').value;
     document.querySelectorAll('.pattern-fields').forEach(el => el.classList.add('hidden'));
     const selectedFields = document.getElementById(`fields-${pattern}`);
@@ -152,7 +118,8 @@ function updatePatternFields() {
     }
 }
 
-function collectPatternData() {
+// Make collectPatternData global
+window.collectPatternData = function collectPatternData() {
     const pattern = document.getElementById('patternSelect').value;
     const data = { pattern };
 
@@ -197,7 +164,7 @@ window.onload = async function () {
     updatePatternFields();
 };
 
-function toggleApiKeyInputs() {
+window.toggleApiKeyInputs = function toggleApiKeyInputs() {
     const provider = providerSelect.value;
     openaiInputGroup.classList.toggle('hidden', provider !== 'openai');
     geminiInputGroup.classList.toggle('hidden', provider !== 'gemini');
@@ -206,7 +173,7 @@ function toggleApiKeyInputs() {
     updateApiStatus();
 }
 
-async function loadConfig() {
+window.loadConfig = async function loadConfig() {
     try {
         const response = await fetch(`${API_URL}/config`);
         const data = await response.json();
@@ -279,7 +246,7 @@ function setApiStatus(type, message) {
 }
 
 
-async function saveApiConfig() {
+window.saveApiConfig = async function saveApiConfig() {
     try {
 
         const response = await fetch(`${API_URL}/config`);
@@ -309,8 +276,10 @@ async function saveApiConfig() {
 
             await checkConfiguration();
 
-
-            switchView('improvement');
+            // Switch to direct input tab
+            if (window.switchInputTab) {
+                window.switchInputTab('direct');
+            }
         } else {
             setApiStatus('error', 'API 설정 저장 실패');
             alert('API 설정 저장에 실패했습니다.');
@@ -322,7 +291,7 @@ async function saveApiConfig() {
     }
 }
 
-async function resetApiConfig() {
+window.resetApiConfig = async function resetApiConfig() {
     if (!confirm('선택한 AI 제공자의 API 키를 초기화하시겠습니까?')) return;
 
     const provider = providerSelect.value;
@@ -343,7 +312,7 @@ async function resetApiConfig() {
 }
 
 
-async function saveProjectConfig() {
+window.saveProjectConfig = async function saveProjectConfig() {
     try {
 
         const response = await fetch(`${API_URL}/config`);
@@ -381,7 +350,7 @@ async function saveProjectConfig() {
 }
 
 
-async function resetProjectConfig() {
+window.resetProjectConfig = async function resetProjectConfig() {
     if (!confirm('모든 프로젝트 설정을 초기화하시겠습니까?')) return;
 
     document.getElementById('projectDeveloper').value = '';
@@ -430,16 +399,17 @@ async function saveConfig() {
     }
 }
 
-async function improveRequirement() {
+// Make improveRequirement global for onclick handler
+window.improveRequirement = async function improveRequirement() {
 
     const isConfigValid = await checkConfiguration(true);
     if (!isConfigValid) {
         return;
     }
 
-
-    const isDirectMode = !document.getElementById('directInputMode').classList.contains('hidden');
-
+    // Check which tab is active
+    const directTab = document.getElementById('tab-direct');
+    const isDirectMode = directTab && directTab.classList.contains('active');
 
     const text = isDirectMode
         ? document.getElementById('inputRequirementDirect').value
@@ -501,6 +471,21 @@ function displayResult(data) {
 
     // 4. Key Improvements 
     displayTopImprovements(data.original_scores, data.improved_scores, data.explanations || [], data.improved_result.improved);
+
+    // 5. Add to history
+    const isDirectMode = !document.getElementById('tab-direct').classList.contains('hidden');
+    const originalText = isDirectMode
+        ? document.getElementById('inputRequirementDirect').value
+        : document.getElementById('inputRequirementPattern').value;
+
+    if (window.addToHistory) {
+        window.addToHistory(
+            originalText,
+            data.improved_result.improved,
+            data.original_scores.total,
+            data.improved_scores.total
+        );
+    }
 }
 
 function displayScoreComparison(original, improved, comparison) {

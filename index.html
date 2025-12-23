@@ -5,1579 +5,355 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Requirement Analyzer</title>
-    <style>
-        :root {
-            --primary-color: #0052CC;
-            --sidebar-bg: #F4F5F7;
-            --content-bg: #FFFFFF;
-            --text-color: #172B4D;
-            --border-color: #DFE1E6;
-            --hover-bg: #EBECF0;
-        }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-            color: var(--text-color);
-            height: 100vh;
-            display: flex;
-            overflow: hidden;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 260px;
-            background-color: var(--sidebar-bg);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            padding: 20px 10px;
-        }
-
-        .app-title {
-            font-size: 16px;
-            font-weight: 600;
-            padding: 0 10px 20px 10px;
-            color: #42526E;
-            display: flex;
-            align-items: center;
-        }
-
-        .app-title span {
-            margin-left: 8px;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            padding: 10px 12px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #42526E;
-            display: flex;
-            align-items: center;
-            margin-bottom: 2px;
-        }
-
-        .nav-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .nav-item.active {
-            background-color: #E6EFFC;
-            color: var(--primary-color);
-            font-weight: 500;
-        }
-
-        .nav-icon {
-            margin-right: 10px;
-            font-size: 16px;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            background-color: var(--content-bg);
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .page-header {
-            padding: 20px 40px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .breadcrumbs {
-            font-size: 12px;
-            color: #6B778C;
-            margin-bottom: 8px;
-        }
-
-        .page-title {
-            font-size: 24px;
-            font-weight: 500;
-            color: #172B4D;
-        }
-
-        .page-body {
-            padding: 40px;
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        /* Views */
-        .view-section {
-            display: none;
-        }
-
-        .view-section.active {
-            display: block;
-        }
-
-        /* Forms & Inputs */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: #5E6C84;
-            margin-bottom: 4px;
-        }
-
-        .input-field,
-        .textarea-field,
-        .select-field {
-            width: 100%;
-            padding: 8px 10px;
-            border: 2px solid #DFE1E6;
-            border-radius: 3px;
-            font-size: 14px;
-            background-color: #FAFBFC;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        .input-field:hover,
-        .textarea-field:hover,
-        .select-field:hover {
-            background-color: #EBECF0;
-        }
-
-        .input-field:focus,
-        .textarea-field:focus,
-        .select-field:focus {
-            background-color: #FFFFFF;
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        .textarea-field {
-            min-height: 150px;
-            resize: vertical;
-            font-family: 'Courier New', monospace;
-            line-height: 1.5;
-        }
-
-        /* Buttons */
-        .btn {
-            padding: 8px 16px;
-            border-radius: 3px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            transition: background-color 0.1s;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #0065FF;
-        }
-
-        .btn-primary:disabled {
-            background-color: rgba(9, 30, 66, 0.04);
-            color: #A5ADBA;
-            cursor: not-allowed;
-        }
-
-        .btn-secondary {
-            background-color: rgba(9, 30, 66, 0.04);
-            color: #42526E;
-        }
-
-        .btn-secondary:hover {
-            background-color: rgba(9, 30, 66, 0.08);
-        }
-
-        /* Panels / Macros */
-        .panel {
-            border-radius: 3px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: flex-start;
-        }
-
-        .panel-info {
-            background-color: #DEEBFF;
-            color: #0747A6;
-        }
-
-        .panel-success {
-            background-color: #E3FCEF;
-            color: #006644;
-        }
-
-        .panel-warning {
-            background-color: #FFFAE6;
-            color: #BF2600;
-            /* Actually red for warning text usually, or dark orange */
-        }
-
-        .panel-icon {
-            margin-right: 12px;
-            font-size: 16px;
-        }
-
-        /* Grid */
-        .grid-3 {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 20px;
-        }
-
-        /* Results */
-        .result-card {
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .result-header {
-            background-color: #F4F5F7;
-            padding: 10px 16px;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .result-body {
-            padding: 20px;
-            background-color: white;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 2px 8px;
-            border-radius: 3px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .badge-success {
-            background-color: #E3FCEF;
-            color: #006644;
-        }
-
-        /* Loading */
-        .loading-spinner {
-            border: 3px solid rgba(0, 0, 0, 0.1);
-            border-radius: 50%;
-            border-top: 3px solid var(--primary-color);
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 10px;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Results Layout */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .score-panel {
-            border: 2px solid;
-            border-radius: 3px;
-            padding: 20px;
-        }
-
-        .score-panel.original {
-            border-color: #0052CC;
-        }
-
-        .score-panel.improved {
-            border-color: #BF2600;
-        }
-
-        .score-total {
-            text-align: center;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .score-number {
-            font-size: 36px;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .score-percent {
-            font-size: 14px;
-            color: #6B778C;
-        }
-
-        .score-delta {
-            font-size: 16px;
-            font-weight: 600;
-            color: #BF2600;
-            margin-top: 8px;
-        }
-
-        .category-score {
-            margin-bottom: 16px;
-        }
-
-        .category-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-            font-size: 13px;
-        }
-
-        .category-name {
-            font-weight: 600;
-            color: #172B4D;
-        }
-
-        .category-value {
-            color: #6B778C;
-        }
-
-        .progress-bar-bg {
-            width: 100%;
-            height: 8px;
-            background-color: #EBECF0;
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            background-color: #0052CC;
-            transition: width 0.3s ease;
-        }
-
-        .progress-bar-fill.improved {
-            background-color: #36B37E;
-        }
-
-        /* Detailed Score Table */
-        .score-table-container {
-            max-height: 400px;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-        }
-
-        .score-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .score-table th {
-            background-color: #F4F5F7;
-            padding: 10px;
-            text-align: left;
-            font-size: 12px;
-            font-weight: 600;
-            color: #5E6C84;
-            position: sticky;
-            top: 0;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .score-table td {
-            padding: 10px;
-            border-bottom: 1px solid #EBECF0;
-            font-size: 13px;
-        }
-
-        .score-table tr:hover {
-            background-color: #F4F5F7;
-        }
-
-        .score-change {
-            font-weight: 600;
-            color: #36B37E;
-        }
-
-        .score-change.negative {
-            color: #BF2600;
-        }
-
-        /* Requirement Cards */
-        .req-card {
-            border: 1px solid var(--border-color);
-            border-radius: 3px;
-            padding: 16px;
-            margin-bottom: 12px;
-            background-color: #FAFBFC;
-        }
-
-        .req-card-header {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .req-number-badge {
-            background-color: #0052CC;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .req-pattern-badge {
-            background-color: #DFE1E6;
-            color: #42526E;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .req-text {
-            color: #172B4D;
-            line-height: 1.6;
-            font-size: 14px;
-        }
-
-        /* Improvements List */
-        .improvement-item {
-            margin-bottom: 16px;
-            padding-left: 24px;
-            position: relative;
-        }
-
-        .improvement-item::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #36B37E;
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .improvement-title {
-            font-weight: 600;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .input-mode-tab:hover {
-            color: #172B4D;
-            background: #F4F5F7;
-        }
-
-        .input-mode-tab.active {
-            color: #0052CC;
-            border-bottom-color: #0052CC;
-        }
-
-        .input-mode-content {
-            display: block;
-        }
-
-        .input-mode-content.hidden {
-            display: none;
-        }
-
-        /* 2-Level Tab Guide Styles */
-        .content-main-wrapper {
-            display: flex;
-            gap: 20px;
-            position: relative;
-        }
-
-        .input-area {
-            flex: 1;
-        }
-
-        .guide-container {
-            width: 400px;
-            position: sticky;
-            top: 20px;
-            height: fit-content;
-            max-height: calc(100vh - 160px);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* Primary Tabs */
-        .guide-tabs-primary {
-            display: flex;
-            gap: 4px;
-            background: white;
-            border: 1px solid var(--border-color);
-            border-radius: 4px 4px 0 0;
-            padding: 8px 8px 0 8px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .guide-tab-primary {
-            flex: 1;
-            padding: 10px 12px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 4px 4px 0 0;
-            font-size: 13px;
-            font-weight: 500;
-            color: #42526E;
-            background: #F4F5F7;
-            transition: all 0.2s;
-            border: 1px solid transparent;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .guide-tab-primary:hover {
-            background: #EBECF0;
-        }
-
-        .guide-tab-primary.active {
-            background: white;
-            color: var(--primary-color);
-            border: 1px solid var(--border-color);
-            border-bottom: 2px solid white;
-            margin-bottom: -2px;
-            font-weight: 600;
-        }
-
-        .guide-tab-icon {
-            font-size: 18px;
-        }
-
-        .guide-tab-label {
-            font-size: 11px;
-            white-space: nowrap;
-        }
-
-        /* Guide Content Wrapper */
-        .guide-content-wrapper {
-            background: white;
-            border: 1px solid var(--border-color);
-            border-top: none;
-            border-radius: 0 0 4px 4px;
-            overflow: hidden;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .guide-primary-content {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .guide-primary-content.active {
-            display: flex;
-        }
-
-        /* Secondary Tabs */
-        .guide-tabs-secondary {
-            display: flex;
-            gap: 4px;
-            background: #F4F5F7;
-            padding: 8px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .guide-tab-secondary {
-            flex: 1;
-            padding: 8px 10px;
-            text-align: center;
-            cursor: pointer;
-            border-radius: 3px;
-            font-size: 12px;
-            font-weight: 500;
-            color: #42526E;
-            background: white;
-            transition: all 0.2s;
-            border: 1px solid var(--border-color);
-        }
-
-        .guide-tab-secondary:hover {
-            background: #EBECF0;
-            border-color: #0052CC;
-        }
-
-        .guide-tab-secondary.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        /* Secondary Tab Content */
-        .guide-secondary-content {
-            display: none;
-            padding: 20px;
-            overflow-y: auto;
-            max-height: calc(100vh - 400px);
-        }
-
-        .guide-secondary-content.active {
-            display: block;
-        }
-
-        /* Content Sections */
-        .guide-section {
-            margin-bottom: 24px;
-            padding-bottom: 24px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .guide-section:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .guide-section-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            background: #E6EFFC;
-            border-radius: 4px;
-            border-left: 3px solid var(--primary-color);
-        }
-
-        .guide-section-content {
-            font-size: 13px;
-            line-height: 1.6;
-            color: #42526E;
-        }
-    </style>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components/guide-panel.css">
+    <link rel="stylesheet" href="css/components/input-panel.css">
+    <link rel="stylesheet" href="css/components/history-panel.css">
 </head>
 
 <body>
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <div class="app-title">
-            <span>🔧 Requirement Analyzer</span>
+    <!-- Header -->
+    <header class="app-header">
+        <h1>🔧 Requirement Analyzer</h1>
+    </header>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Left: Guide Panel -->
+        <div class="guide-panel" id="guidePanelContainer">
+            <!-- Rendered by GuidePanel.js -->
         </div>
-        <ul class="nav-menu">
-            <li class="nav-item active" onclick="switchView('improvement')">
-                <span class="nav-icon">✨</span>
-                Improvement
-            </li>
-            <li class="nav-item" onclick="switchView('history')">
-                <span class="nav-icon">🕒</span>
-                History
-            </li>
-        </ul>
-        <ul class="nav-menu" style="margin-top: auto;">
-            <li class="nav-item" onclick="switchView('settings')">
-                <span class="nav-icon">⚙️</span>
-                Settings
-            </li>
-        </ul>
-    </div>
 
-    <!-- Main Content -->
-    <div class="main-content">
-
-        <!-- View: Improvement -->
-        <div id="view-improvement" class="view-section active">
-            <div class="page-header">
-                <div class="breadcrumbs">Pages / Requirements</div>
-                <h1 class="page-title">Improve Requirement</h1>
+        <!-- Center: Input Panel -->
+        <div class="input-panel">
+            <!-- Tab Navigation -->
+            <div class="input-tabs">
+                <button class="input-tab active" data-tab="direct" onclick="switchInputTab('direct')">
+                    Direct Input
+                </button>
+                <button class="input-tab" data-tab="pattern" onclick="switchInputTab('pattern')">
+                    Pattern Input
+                </button>
             </div>
 
-            <div class="page-body">
-                <!-- Configuration Warning (Modified) -->
-                <div id="configWarning" class="hidden"
-                    style="background-color: #FFF0B3; border: 1px solid #FFC400; color: #172B4D; padding: 16px; border-radius: 4px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between;">
-                    <div>
-                        <strong>설정이 필요합니다</strong><br>
-                        <span style="font-size: 13px;">왼쪽 하단의 Settings 메뉴에서 API 키와 프로젝트 설정을 완료해주세요.</span>
+            <!-- Tab Content -->
+            <div class="input-content">
+                <!-- Direct Input Tab -->
+                <div id="tab-direct" class="tab-pane active">
+                    <!-- Configuration Warning -->
+                    <div id="configWarning" class="hidden panel panel-warning" style="margin-bottom: 20px;">
+                        <span class="panel-icon">⚠️</span>
+                        <div>
+                            <strong>설정이 필요합니다</strong><br>
+                            <span style="font-size: 13px;">Settings 탭에서 API 키와 프로젝트 설정을 완료해주세요.</span>
+                        </div>
                     </div>
-                    <button class="btn btn-secondary" onclick="switchView('settings')"
-                        style="background: white; border: 1px solid #DFE1E6;">설정 열기</button>
+
+                    <div class="form-group">
+                        <label class="label">Original Requirement Text</label>
+                        <textarea class="textarea-field" id="inputRequirementDirect"
+                            placeholder="Enter original requirement text here..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" id="btnImprove" onclick="improveRequirement()">
+                            Improve
+                        </button>
+                    </div>
+
+                    <!-- Loading -->
+                    <div id="loadingSection" class="hidden" style="text-align: center; padding: 40px;">
+                        <div class="loading-spinner"></div>
+                        <p style="color: var(--text-tertiary); font-size: 14px;">AI is analyzing...</p>
+                    </div>
+
+                    <!-- Results -->
+                    <div id="resultSection" class="hidden results-section">
+                        <!-- Section 1: Score Comparison -->
+                        <h2 class="result-header">품질 점수 비교</h2>
+                        <div class="grid-2" style="margin-bottom: 40px;">
+                            <!-- Original Panel -->
+                            <div class="score-panel original">
+                                <div class="score-total">
+                                    <div class="score-number" id="scoreOriginalTotal">0 / 320</div>
+                                    <div class="score-percent" id="scoreOriginalPercent">0%</div>
+                                </div>
+                                <div id="categoryScoresOriginal"></div>
+                            </div>
+
+                            <!-- Improved Panel -->
+                            <div class="score-panel improved">
+                                <div class="score-total">
+                                    <div class="score-number" id="scoreImprovedTotal">0 / 320</div>
+                                    <div class="score-percent" id="scoreImprovedPercent">0%</div>
+                                    <div class="score-delta" id="scoreDeltaText">+0점 (+0%)</div>
+                                </div>
+                                <div id="categoryScoresImproved"></div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Detailed Score Table -->
+                        <h2 class="result-header">상세 점수 비교</h2>
+                        <div class="score-table-container" style="margin-bottom: 40px;">
+                            <table class="score-table">
+                                <thead>
+                                    <tr>
+                                        <th>규칙</th>
+                                        <th>원본</th>
+                                        <th>개선</th>
+                                        <th>변화</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detailedScoreTableBody"></tbody>
+                            </table>
+                        </div>
+
+                        <!-- Section 3: Improved Requirements Cards -->
+                        <h2 class="result-header">개선된 요구사항</h2>
+                        <div id="requirementCardsContainer" style="margin-bottom: 40px;"></div>
+
+                        <!-- Section 4: Key Improvements -->
+                        <h2 class="result-header">주요 개선 사항</h2>
+                        <div id="keyImprovementsList"></div>
+
+                        <!-- Section 5: Additional Recommendations -->
+                        <h2 class="result-header" style="background: var(--accent-purple); margin-top: 40px;">
+                            추가 개선 권장사항
+                        </h2>
+                        <div id="recommendationsList"></div>
+                    </div>
                 </div>
 
-                <div class="content-main-wrapper">
-                    <!-- Left: Input Area -->
-                    <div class="input-area">
-                        <!-- Input Mode Tabs -->
+                <!-- Pattern Input Tab -->
+                <div id="tab-pattern" class="tab-pane">
+                    <!-- Project Context Fields -->
+                    <div class="project-context-box">
+                        <h4>프로젝트 설정 (이번 요구사항에만 적용)</h4>
                         <div class="form-group">
-                            <div
-                                style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #DFE1E6;">
-                                <button id="tabDirectInput" class="input-mode-tab active"
-                                    onclick="switchInputMode('direct')">
-                                    Direct Input
-                                </button>
-                                <button id="tabPatternInput" class="input-mode-tab"
-                                    onclick="switchInputMode('pattern')">
-                                    Pattern Input
-                                </button>
-                            </div>
+                            <label class="label">담당자 (담당부서)</label>
+                            <input type="text" class="input-field" id="patternDeveloper"
+                                placeholder="미 입력시 Settings에서 자동 로드">
                         </div>
-
-
-                        <!-- Direct Input Mode -->
-                        <div id="directInputMode" class="input-mode-content">
-                            <div class="form-group">
-                                <label class="label">Original Requirement Text</label>
-                                <textarea class="textarea-field" id="inputRequirementDirect"
-                                    placeholder="Enter original requirement text here..."></textarea>
-                            </div>
-                        </div>
-
-                        <!-- Pattern Input Mode -->
-                        <div id="patternInputMode" class="input-mode-content hidden">
-                            <!-- Project Context Fields (Auto-loaded from Settings) -->
-                            <div class="form-group"
-                                style="background: #F4F5F7; padding: 16px; border-radius: 4px; margin-bottom: 20px;">
-                                <h4 style="font-size: 14px; margin-bottom: 12px; color: #172B4D;">프로젝트 설정 (이번 요구사항에만
-                                    적용)</h4>
-                                <div class="form-group">
-                                    <label class="label">담당자 (담당부서)</label>
-                                    <input type="text" class="input-field" id="patternDeveloper"
-                                        placeholder="미 입력시 Settings에서 자동 로드">
-                                </div>
-                                <div class="form-group">
-                                    <label class="label">System</label>
-                                    <input type="text" class="input-field" id="patternSystem"
-                                        placeholder="미 입력시 Settings에서 자동 로드">
-                                </div>
-                                <div class="form-group">
-                                    <label class="label">Client</label>
-                                    <input type="text" class="input-field" id="patternClient"
-                                        placeholder="미 입력시 Settings에서 자동 로드">
-                                </div>
-                            </div>
-
-                            <!-- Original Text -->
-                            <div class="form-group">
-                                <label class="label">Original Requirement Text</label>
-                                <textarea class="textarea-field" id="inputRequirementPattern"
-                                    placeholder="Enter original requirement text here..."></textarea>
-                            </div>
-
-                            <!-- Pattern Selection -->
-                            <div class="form-group">
-                                <label class="label">Pattern Type</label>
-                                <select class="select-field" id="patternSelect" onchange="updatePatternFields()">
-                                    <option value="ubiquitous">Ubiquitous</option>
-                                    <option value="event-driven">Event-Driven</option>
-                                    <option value="unwanted">Unwanted Behavior</option>
-                                    <option value="state-driven">State-Driven</option>
-                                    <option value="optional">Optional</option>
-                                    <option value="complex">Complex</option>
-                                </select>
-                            </div>
-
-                            <!-- Pattern Fields Container -->
-                            <div id="patternFieldsContainer">
-                                <!-- Ubiquitous Fields -->
-                                <div id="fields-ubiquitous" class="pattern-fields">
-                                    <div class="form-group">
-                                        <label class="label">시스템 응답</label>
-                                        <input type="text" class="input-field" id="field-system-response"
-                                            placeholder="예: 데이터를 전송해야 한다">
-                                    </div>
-                                </div>
-
-                                <!-- Event-Driven Fields -->
-                                <div id="fields-event-driven" class="pattern-fields hidden">
-                                    <div class="form-group">
-                                        <label class="label">선행 조건</label>
-                                        <input type="text" class="input-field" id="field-precondition"
-                                            placeholder="예: 시스템이 활성화된 상태에서">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">트리거 이벤트</label>
-                                        <input type="text" class="input-field" id="field-trigger"
-                                            placeholder="예: 사용자가 버튼을 누르면">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">시스템 응답</label>
-                                        <input type="text" class="input-field" id="field-system-response-ed"
-                                            placeholder="예: 경고음을 울려야 한다">
-                                    </div>
-                                </div>
-
-                                <!-- Unwanted Behavior Fields -->
-                                <div id="fields-unwanted" class="pattern-fields hidden">
-                                    <div class="form-group">
-                                        <label class="label">선행 조건</label>
-                                        <input type="text" class="input-field" id="field-precondition-uw"
-                                            placeholder="예: 정상 작동 중">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">금지 동작</label>
-                                        <input type="text" class="input-field" id="field-forbidden"
-                                            placeholder="예: 오류 메시지를 표시하지 않아야 한다">
-                                    </div>
-                                </div>
-
-                                <!-- State-Driven Fields -->
-                                <div id="fields-state-driven" class="pattern-fields hidden">
-                                    <div class="form-group">
-                                        <label class="label">특정 조건</label>
-                                        <input type="text" class="input-field" id="field-condition"
-                                            placeholder="예: 대기 모드일 때">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">시스템 응답</label>
-                                        <input type="text" class="input-field" id="field-system-response-sd"
-                                            placeholder="예: 전력 소비를 최소화해야 한다">
-                                    </div>
-                                </div>
-
-                                <!-- Optional Fields -->
-                                <div id="fields-optional" class="pattern-fields hidden">
-                                    <div class="form-group">
-                                        <label class="label">선택적 기능/조건</label>
-                                        <input type="text" class="input-field" id="field-optional-feature"
-                                            placeholder="예: 사용자가 요청하는 경우">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">시스템 응답</label>
-                                        <input type="text" class="input-field" id="field-system-response-opt"
-                                            placeholder="예: 상세 로그를 제공할 수 있다">
-                                    </div>
-                                </div>
-
-                                <!-- Complex Fields -->
-                                <div id="fields-complex" class="pattern-fields hidden">
-                                    <div class="form-group">
-                                        <label class="label">선행 조건</label>
-                                        <input type="text" class="input-field" id="field-precondition-cx"
-                                            placeholder="예: 초기화 완료 후">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">트리거 이벤트</label>
-                                        <input type="text" class="input-field" id="field-trigger-cx"
-                                            placeholder="예: 신호를 수신하면">
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="label">시스템 응답</label>
-                                        <input type="text" class="input-field" id="field-system-response-cx"
-                                            placeholder="예: 데이터를 처리하고 결과를 전송해야 한다">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <div class="form-group">
-                            <button class="btn btn-primary" id="btnImprove"
-                                onclick="improveRequirement()">Improve</button>
+                            <label class="label">System</label>
+                            <input type="text" class="input-field" id="patternSystem"
+                                placeholder="미 입력시 Settings에서 자동 로드">
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Client</label>
+                            <input type="text" class="input-field" id="patternClient"
+                                placeholder="미 입력시 Settings에서 자동 로드">
                         </div>
                     </div>
 
-                    <!-- Right: 2-Level Tab Guide -->
-                    <div class="guide-container">
-                        <!-- Primary Tabs -->
-                        <div class="guide-tabs-primary">
-                            <div class="guide-tab-primary active" onclick="switchGuidePrimaryTab('classification')">
-                                <span class="guide-tab-icon">📊</span>
-                                <span class="guide-tab-label">요구사항 분류</span>
+                    <!-- Original Text -->
+                    <div class="form-group">
+                        <label class="label">Original Requirement Text</label>
+                        <textarea class="textarea-field" id="inputRequirementPattern"
+                            placeholder="Enter original requirement text here..."></textarea>
+                    </div>
+
+                    <!-- Pattern Selection -->
+                    <div class="form-group">
+                        <label class="label">Pattern Type</label>
+                        <select class="select-field" id="patternSelect" onchange="updatePatternFields()">
+                            <option value="ubiquitous">Ubiquitous</option>
+                            <option value="event-driven">Event-Driven</option>
+                            <option value="unwanted">Unwanted Behavior</option>
+                            <option value="state-driven">State-Driven</option>
+                            <option value="optional">Optional</option>
+                            <option value="complex">Complex</option>
+                        </select>
+                    </div>
+
+                    <!-- Pattern Fields Container -->
+                    <div id="patternFieldsContainer">
+                        <!-- Ubiquitous Fields -->
+                        <div id="fields-ubiquitous" class="pattern-fields">
+                            <div class="form-group">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response"
+                                    placeholder="예: 데이터를 전송해야 한다">
                             </div>
-                            <div class="guide-tab-primary" onclick="switchGuidePrimaryTab('rules')">
-                                <span class="guide-tab-icon">✍️</span>
-                                <span class="guide-tab-label">작성 규칙</span>
+                        </div>
+
+                        <!-- Event-Driven Fields -->
+                        <div id="fields-event-driven" class="pattern-fields hidden">
+                            <div class="form-group">
+                                <label class="label">선행 조건</label>
+                                <input type="text" class="input-field" id="field-precondition"
+                                    placeholder="예: 시스템이 활성화된 상태에서">
                             </div>
-                            <div class="guide-tab-primary" onclick="switchGuidePrimaryTab('quality')">
-                                <span class="guide-tab-icon">✅</span>
-                                <span class="guide-tab-label">품질 체크</span>
+                            <div class="form-group">
+                                <label class="label">트리거 이벤트</label>
+                                <input type="text" class="input-field" id="field-trigger" placeholder="예: 사용자가 버튼을 누르면">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response-ed"
+                                    placeholder="예: 경고음을 울려야 한다">
                             </div>
                         </div>
 
-                        <div class="guide-content-wrapper">
-                            <!-- ===== 요구사항 분류 ===== -->
-                            <div id="guide-primary-classification" class="guide-primary-content active">
-                                <!-- Secondary Tabs -->
-                                <div class="guide-tabs-secondary">
-                                    <div class="guide-tab-secondary active"
-                                        onclick="switchGuideSecondaryTab('classification', 'functional')">기능</div>
-                                    <div class="guide-tab-secondary"
-                                        onclick="switchGuideSecondaryTab('classification', 'quality')">품질</div>
-                                    <div class="guide-tab-secondary"
-                                        onclick="switchGuideSecondaryTab('classification', 'constraints')">제약</div>
-                                </div>
-
-                                <!-- Functional Content -->
-                                <div id="guide-classification-functional" class="guide-secondary-content active">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">📋 정의 및 목적</div>
-                                        <div class="guide-section-content">
-                                            <p>기능 요구사항은 시스템이 <strong>무엇을(What)</strong> 수행해야 하는지를 기술한다. 입력(Input)에 대한
-                                                출력(Output), 상태 전이(State Transition), 시스템 동작(Behavior) 등을 명확히 규정하여 시스템의
-                                                동작 범위와 기대 결과를 정의한다.</p>
-                                            <p><strong>주요 특징:</strong></p>
-                                            <ul>
-                                                <li>시스템이 '무엇을(What)' 수행해야 하는지 기능적 동작 정의</li>
-                                                <li>관찰 가능하고 측정 가능한 동작 제시</li>
-                                                <li>입력 조건과 출력 결과 명확화</li>
-                                                <li>테스트 케이스를 통해 직접 검증 가능</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">✍️ 작성 원칙</div>
-                                        <div class="guide-section-content">
-                                            <ul>
-                                                <li>주어와 동사를 포함한 명확한 문장 구조를 사용한다.</li>
-                                                <li><strong>'shall'(해야 한다)</strong>을 사용하여 구속력 있는 요구사항을 명시한다.</li>
-                                                <li>'should'(하면 좋다), 'may'(해도 된다), 'will'(~할 것이다)은 반드시 수행해야 하는 요구사항이 아닌
-                                                    경우에만 사용한다.</li>
-                                                <li>부정형(shall not) 및 수동태(It is required that) 표현은 피한다.</li>
-                                                <li>측정 가능한 조건(measurable condition)과 검증 가능성(verifiability)을 포함한다.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">💡 작성 예시</div>
-                                        <div class="guide-section-content">
-                                            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-                                                <thead>
-                                                    <tr style="background: #F4F5F7;">
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            요구사항 ID</th>
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            설명</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            FR-001</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Body CAN을 통해 후진 기어 신호가 수신되면, IRCU는 100ms 이내에 후방 램프를 활성화해야
-                                                            한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            FR-002</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            차량 속도가 30 km/h 이상이고 조향각이 45°를 초과하면, IRCU는 해당 방향의 코너링 램프를 켜야
-                                                            한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            FR-003</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            IRCU는 시스템 초기화 시 5초 이내에 자가진단 테스트를 완료해야 한다.</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Quality Content -->
-                                <div id="guide-classification-quality" class="guide-secondary-content">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">📋 정의 및 목적</div>
-                                        <div class="guide-section-content">
-                                            <p>품질 요구사항은 시스템이 <strong>얼마나 잘(How Well)</strong> 동작해야 하는지를 정의하는 비기능
-                                                요구사항(Non-Functional Requirements)이다. 기능 요구사항이 "무엇을 해야 하는가"를 정의한다면, 품질
-                                                요구사항은 "그 기능을 얼마나 잘 수행해야 하는가"를 정의한다.</p>
-                                            <p><strong>품질 요구사항의 중요성:</strong></p>
-                                            <p>품질 요구사항이 명확하지 않으면 다음과 같은 문제가 발생한다:</p>
-                                            <ul>
-                                                <li>성능 목표가 불명확할 경우 사용자 기대 미달 가능</li>
-                                                <li>보안 취약점 발생 시 데이터 유출 위험</li>
-                                                <li>유지보수 비용 증가 및 확장성 제약</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">🏷️ 품질 요구사항 분류</div>
-                                        <div class="guide-section-content">
-                                            <p style="font-size: 11px; color: #6B778C; margin-bottom: 8px;">※ 자세한 내용은
-                                                ISO/IEC/IEEE 25010:2022 Quality Characteristics를 참조</p>
-                                            <table
-                                                style="width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 11px;">
-                                                <thead>
-                                                    <tr style="background: #F4F5F7;">
-                                                        <th
-                                                            style="padding: 6px; border: 1px solid #DFE1E6; text-align: left;">
-                                                            품질 유형</th>
-                                                        <th
-                                                            style="padding: 6px; border: 1px solid #DFE1E6; text-align: left;">
-                                                            정의</th>
-                                                        <th
-                                                            style="padding: 6px; border: 1px solid #DFE1E6; text-align: left;">
-                                                            예시</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">기능 적합성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">명시된 조건에서
-                                                            명시된 요구를 만족하는 기능 제공 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">ADAS는 차선이탈,
-                                                            전방 추돌경고, 긴급제동 기능을 모두 포함해야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">성능 효율성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">명시된 조건에서
-                                                            사용되는 자원의 양에 대한 성능의 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">레이더 데이터 처리
-                                                            주기는 100ms 이내여야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">호환성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">다른 제품/시스템과
-                                                            정보를 교환하고 기능을 수행할 수 있는 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">차량 ECU는 ISO
-                                                            11898 CAN 프로토콜을 따라야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">신뢰성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">특정 조건에서 특정
-                                                            기간 동안 기능을 수행하는 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">제어 알고리즘은
-                                                            100시간 연속 운행 시 오류가 발생하지 않아야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">보안성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">정보와 데이터가
-                                                            보호되어 권한에 따라 접근과 변경이 가능한 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">차량-서버 통신은
-                                                            TLS 1.3 암호화를 적용해야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">안전성</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">인명·재산·환경에
-                                                            위해를 주지 않도록 설계된 정도</td>
-                                                        <td style="padding: 6px; border: 1px solid #DFE1E6;">센서 오류 발생 시
-                                                            차량은 자동으로 페일세이프 모드로 전환되어야 한다.</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">✍️ 작성 원칙</div>
-                                        <div class="guide-section-content">
-                                            <ul>
-                                                <li>요구사항은 <strong>정량적(Quantifiable)</strong> 조건을 포함해야 한다.</li>
-                                                <li>"shall"을 사용하여 <strong>검증 가능(Verifiable)</strong>하게 기술한다.</li>
-                                                <li>측정 가능한 조건(measurable condition)과 검증 가능성(verifiability)을 포함한다.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">💡 작성 예시 - 성능 (Performance)</div>
-                                        <div class="guide-section-content">
-                                            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-                                                <thead>
-                                                    <tr style="background: #F4F5F7;">
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            요구사항 ID</th>
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            설명</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            QR-001-001</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            ECU는 운전자가 가속 페달을 밟은 후 100ms 이내에 엔진 토크 제어 신호를 출력해야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            QR-001-002</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            ECU와 센서 간 데이터 송수신 주기는 50ms 이하로 유지되어야 한다.</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            QR-001-003</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            ECU 간 통신 장애가 발생해도 주행 제어 기능은 기본 모드로 1초 이내 복구되어야 한다.</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Constraints Content -->
-                                <div id="guide-classification-constraints" class="guide-secondary-content">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">📋 정의 및 목적</div>
-                                        <div class="guide-section-content">
-                                            <p>시스템 자체, 그 설계 또는 구현, 혹은 시스템을 개발하거나 수정하는 데 사용되는 프로세스에 <strong>외부적으로 부과된
-                                                    제한사항</strong>을 의미한다. 즉, 시스템이 어떻게 만들어져야 하는지를 외부 요인에 의해 강제로 제한하거나 규정하는
-                                                조건이다.</p>
-                                            <p><strong>목적:</strong></p>
-                                            <ul>
-                                                <li>설계의 자유도를 제한하여 시스템 개발의 방향성을 명확히 함</li>
-                                                <li>법적, 기술적, 관리적 요건의 준수를 보장함</li>
-                                                <li>프로젝트, 비즈니스, 운영 단계에서 발생 가능한 리스크를 예방함</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">🔍 제약사항 특징</div>
-                                        <div class="guide-section-content">
-                                            <ul>
-                                                <li><strong>외부 요인에 의해 부과됨:</strong> 제약사항은 개발자 내부 결정이 아닌, 법규·표준·계약·정책·기술
-                                                    환경 등 외부 요구로부터 발생한다.</li>
-                                                <li><strong>설계의 자유도 제한:</strong> 시스템이 사용할 기술, 방법, 절차를 명시함으로써 설계 및 구현의 선택
-                                                    범위를 제한한다.</li>
-                                                <li><strong>근거 기반 요구사항:</strong> 각 제약은 반드시 근거(Source)를 가져야 하며,
-                                                    법규·표준·계약·고객 요구 등으로부터 도출된다.</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">🏷️ 제약사항 유형</div>
-                                        <div class="guide-section-content">
-                                            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-                                                <thead>
-                                                    <tr style="background: #F4F5F7;">
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            제약 유형</th>
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            내용</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Business Operational Constraints</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            비즈니스 관점에서 시스템 또는 프로세스 수행에 조직적·법적·관리적 제약을 부과하는 요구사항</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Project Constraints</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            프로젝트 수행과 관련된 기술적, 절차적, 일정적 제약을 포함하며 개발·검증·품질보증 프로세스의 실행 방식을
-                                                            제한하는 요구사항</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Operational Constraints</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            시스템이 실제 환경에서 운영될 때 만족해야 하는 기술적·성능적 조건을 정의한 요구사항</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">💡 작성 예시</div>
-                                        <div class="guide-section-content">
-                                            <table style="width: 100%; border-collapse: collapse; margin-top: 8px;">
-                                                <thead>
-                                                    <tr style="background: #F4F5F7;">
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            요구사항 ID</th>
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            설명</th>
-                                                        <th
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; text-align: left; font-size: 12px;">
-                                                            제약사항 유형</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            CON-001</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            CE 인증 및 EMC 규격을 준수해야 한다.</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Business Operational</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            CON-002</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            C++17, AUTOSAR Adaptive 기반으로 개발해야 한다.</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Project</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            CON-003</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            온도 -40°C~85°C에서 정상 동작해야 한다.</td>
-                                                        <td
-                                                            style="padding: 8px; border: 1px solid #DFE1E6; font-size: 12px;">
-                                                            Operational</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
+                        <!-- Unwanted Behavior Fields -->
+                        <div id="fields-unwanted" class="pattern-fields hidden">
+                            <div class="form-group">
+                                <label class="label">선행 조건</label>
+                                <input type="text" class="input-field" id="field-precondition-uw"
+                                    placeholder="예: 정상 작동 중">
                             </div>
-
-                            <!-- ===== 작성 규칙 ===== -->
-                            <div id="guide-primary-rules" class="guide-primary-content">
-                                <div class="guide-tabs-secondary">
-                                    <div class="guide-tab-secondary active"
-                                        onclick="switchGuideSecondaryTab('rules', 'ears')">EARS 패턴</div>
-                                    <div class="guide-tab-secondary"
-                                        onclick="switchGuideSecondaryTab('rules', 'principles')">작성 원칙</div>
-                                </div>
-
-                                <div id="guide-rules-ears" class="guide-secondary-content active">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">📝 Ubiquitous</div>
-                                        <div class="guide-section-content">
-                                            <p>[여기에 Ubiquitous 패턴 설명이 들어갑니다]</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="guide-rules-principles" class="guide-secondary-content">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">✍️ Necessary (필수성)</div>
-                                        <div class="guide-section-content">
-                                            <p>[여기에 필수성 원칙 설명이 들어갑니다]</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- ===== 품질 체크 ===== -->
-                            <div id="guide-primary-quality" class="guide-primary-content">
-                                <div class="guide-tabs-secondary">
-                                    <div class="guide-tab-secondary active"
-                                        onclick="switchGuideSecondaryTab('quality', 'characteristics')">특성 C1-C15
-                                    </div>
-                                    <div class="guide-tab-secondary"
-                                        onclick="switchGuideSecondaryTab('quality', 'writing-rules')">규칙 R1-R42
-                                    </div>
-                                    <div class="guide-tab-secondary"
-                                        onclick="switchGuideSecondaryTab('quality', 'pattern-elements')">요소 P1-P7
-                                    </div>
-                                </div>
-
-                                <div id="guide-quality-characteristics" class="guide-secondary-content active">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">✅ C1: Necessary</div>
-                                        <div class="guide-section-content">
-                                            <p>[여기에 C1 특성 설명이 들어갑니다]</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="guide-quality-writing-rules" class="guide-secondary-content">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">📋 R2: 능동형 문장</div>
-                                        <div class="guide-section-content">
-                                            <p>[여기에 R2 규칙 설명이 들어갑니다]</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div id="guide-quality-pattern-elements" class="guide-secondary-content">
-                                    <div class="guide-section">
-                                        <div class="guide-section-title">🔧 P1: 주어 (Entity)</div>
-                                        <div class="guide-section-content">
-                                            <p>[여기에 P1 요소 설명이 들어갑니다]</p>
-                                        </div>
-                                    </div>
-                                </div>
+                            <div class="form-group">
+                                <label class="label">금지 동작</label>
+                                <input type="text" class="input-field" id="field-forbidden"
+                                    placeholder="예: 오류 메시지를 표시하지 않아야 한다">
                             </div>
                         </div>
+
+                        <!-- State-Driven Fields -->
+                        <div id="fields-state-driven" class="pattern-fields hidden">
+                            <div class="form-group">
+                                <label class="label">특정 조건</label>
+                                <input type="text" class="input-field" id="field-condition" placeholder="예: 대기 모드일 때">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response-sd"
+                                    placeholder="예: 전력 소비를 최소화해야 한다">
+                            </div>
+                        </div>
+
+                        <!-- Optional Fields -->
+                        <div id="fields-optional" class="pattern-fields hidden">
+                            <div class="form-group">
+                                <label class="label">선택적 기능/조건</label>
+                                <input type="text" class="input-field" id="field-optional-feature"
+                                    placeholder="예: 사용자가 요청하는 경우">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response-opt"
+                                    placeholder="예: 상세 로그를 제공할 수 있다">
+                            </div>
+                        </div>
+
+                        <!-- Complex Fields -->
+                        <div id="fields-complex" class="pattern-fields hidden">
+                            <div class="form-group">
+                                <label class="label">선행 조건</label>
+                                <input type="text" class="input-field" id="field-precondition-cx"
+                                    placeholder="예: 초기화 완료 후">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">트리거 이벤트</label>
+                                <input type="text" class="input-field" id="field-trigger-cx" placeholder="예: 신호를 수신하면">
+                            </div>
+                            <div class="form-group">
+                                <label class="label">시스템 응답</label>
+                                <input type="text" class="input-field" id="field-system-response-cx"
+                                    placeholder="예: 데이터를 처리하고 결과를 전송해야 한다">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button class="btn btn-primary" onclick="improveRequirement()">
+                            Improve
+                        </button>
                     </div>
                 </div>
 
-                <!-- Loading -->
-                <div id="loadingSection" class="hidden" style="text-align: center; padding: 40px;">
-                    <div class="loading-spinner"></div>
-                    <p style="color: #5E6C84; font-size: 14px;">AI is analyzing...</p>
-                </div>
-
-                <!-- Results -->
-                <div id="resultSection" class="hidden">
-                    <!-- Section 1: Score Comparison (2-column) -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        품질 점수 비교</h2>
-                    <div class="grid-2" style="margin-bottom: 40px;">
-                        <!-- Original Panel -->
-                        <div class="score-panel original">
-                            <div class="score-total">
-                                <div class="score-number" id="scoreOriginalTotal">0 / 320</div>
-                                <div class="score-percent" id="scoreOriginalPercent">0%</div>
-                            </div>
-                            <div id="categoryScoresOriginal">
-                                <!-- Dynamic category scores -->
-                            </div>
-                        </div>
-
-                        <!-- Improved Panel -->
-                        <div class="score-panel improved">
-                            <div class="score-total">
-                                <div class="score-number" id="scoreImprovedTotal">0 / 320</div>
-                                <div class="score-percent" id="scoreImprovedPercent">0%</div>
-                                <div class="score-delta" id="scoreDeltaText">+0점 (+0%)</div>
-                            </div>
-                            <div id="categoryScoresImproved">
-                                <!-- Dynamic category scores -->
-                            </div>
-                        </div>
+                <!-- Settings Tab -->
+                <div id="tab-settings" class="tab-pane">
+                    <div class="form-group">
+                        <label class="label">AI Provider</label>
+                        <select class="select-field" id="providerSelect" onchange="toggleApiKeyInputs()">
+                            <option value="openai">OpenAI (GPT-4o mini)</option>
+                            <option value="gemini">Google Gemini</option>
+                            <option value="claude">Anthropic Claude</option>
+                        </select>
                     </div>
 
-                    <!-- Section 2: Detailed Score Table -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        상세 점수 비교</h2>
-                    <div class="score-table-container" style="margin-bottom: 40px;">
-                        <table class="score-table">
-                            <thead>
-                                <tr>
-                                    <th>규칙</th>
-                                    <th>원본</th>
-                                    <th>개선</th>
-                                    <th>변화</th>
-                                </tr>
-                            </thead>
-                            <tbody id="detailedScoreTableBody">
-                                <!-- Dynamic rows -->
-                            </tbody>
-                        </table>
+                    <!-- OpenAI Inputs -->
+                    <div id="openaiInputGroup" class="form-group">
+                        <label class="label">API URL</label>
+                        <input type="text" class="input-field" id="openaiUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">API Key</label>
+                        <input type="password" class="input-field" id="openaiKeyInput" placeholder="API 키를 입력해주세요.">
                     </div>
 
-                    <!-- Section 3: Improved Requirements Cards -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        개선된 요구사항</h2>
-                    <div id="requirementCardsContainer" style="margin-bottom: 40px;">
-                        <!-- Dynamic requirement cards -->
+                    <!-- Gemini Inputs -->
+                    <div id="geminiInputGroup" class="form-group hidden">
+                        <label class="label">API URL</label>
+                        <input type="text" class="input-field" id="geminiUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">API Key</label>
+                        <input type="password" class="input-field" id="geminiKeyInput" placeholder="API 키를 입력해주세요.">
                     </div>
 
-                    <!-- Section 4: Key Improvements -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #0052CC; color: white; border-radius: 4px; font-weight: 600;">
-                        주요 개선 사항</h2>
-                    <div id="keyImprovementsList">
-                        <!-- Dynamic improvements -->
+                    <!-- Claude Inputs -->
+                    <div id="claudeInputGroup" class="form-group hidden">
+                        <label class="label">API URL</label>
+                        <input type="text" class="input-field" id="claudeUrlInput" placeholder="API URL을 입력해주세요.">
+                        <label class="label" style="margin-top: 10px;">API Key</label>
+                        <input type="password" class="input-field" id="claudeKeyInput" placeholder="API 키를 입력해주세요.">
                     </div>
 
+                    <!-- API Save/Reset Buttons -->
+                    <div class="form-group" style="display: flex; gap: 10px;">
+                        <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">
+                            Save API Key & Use
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">
+                            Reset API Key
+                        </button>
+                    </div>
 
-                    <!-- Section 6: Additional Recommendations -->
-                    <h2
-                        style="font-size: 18px; margin-bottom: 20px; padding: 12px 16px; background: #6554C0; color: white; border-radius: 4px; font-weight: 600; margin-top: 40px;">
-                        추가 개선 권장사항</h2>
-                    <div id="recommendationsList">
-                        <!-- Dynamic recommendations -->
+                    <!-- Project Settings -->
+                    <div class="form-group"
+                        style="margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-light);">
+                        <h3 style="font-size: 16px; margin-bottom: 10px; color: var(--text-primary);">프로젝트 설정</h3>
+                        <p style="font-size: 12px; color: var(--text-tertiary); margin-bottom: 15px;">
+                            입력 시 AI 추론 정확도가 향상됩니다
+                        </p>
+
+                        <label class="label">담당자 (협력사)</label>
+                        <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
+
+                        <label class="label" style="margin-top: 10px;">System (제어기명)</label>
+                        <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
+
+                        <label class="label" style="margin-top: 10px;">사양 담당자</label>
+                        <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
+                    </div>
+
+                    <div class="form-group" style="display: flex; gap: 10px; margin-top: 20px;">
+                        <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">
+                            Save Project Settings
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">
+                            Reset Project Settings
+                        </button>
+                    </div>
+
+                    <div id="apiStatus" class="panel panel-warning" style="margin-top: 10px;">
+                        <span class="panel-icon">⚠️</span>
+                        <div>Please configure your API keys to use the application.</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- View: History (Placeholder) -->
-        <div id="view-history" class="view-section">
-            <div class="page-header">
-                <div class="breadcrumbs">Pages / History</div>
-                <h1 class="page-title">Requirement History</h1>
-            </div>
-            <div class="page-body">
-                <div class="panel" style="text-align: center; padding: 60px;">
-                    <span style="font-size: 48px; display: block; margin-bottom: 20px;">🕒</span>
-                    <h2 style="color: #172B4D; margin-bottom: 12px;">준비 중인 기능입니다</h2>
-                    <p style="color: #5E6C84;">분석된 요구사항의 히스토리를 확인하고 관리할 수 있는 기능이 곧 추가될 예정입니다.</p>
-                </div>
-            </div>
+        <!-- Right: History Panel -->
+        <div class="history-panel" id="historyPanelContainer">
+            <!-- Rendered by HistoryPanel.js -->
         </div>
-
-        <!-- View: Settings -->
-        <div id="view-settings" class="view-section">
-            <div class="page-header">
-                <div class="breadcrumbs">Pages / Configuration</div>
-                <h1 class="page-title">Settings</h1>
-            </div>
-            <div class="page-body">
-                <div class="form-group">
-                    <label class="label">AI Provider</label>
-                    <select class="select-field" id="providerSelect" onchange="toggleApiKeyInputs()">
-                        <option value="openai">OpenAI (GPT-4o mini)</option>
-                        <option value="gemini">Google Gemini</option>
-                        <option value="claude">Anthropic Claude</option>
-                    </select>
-                </div>
-
-                <!-- OpenAI Inputs (URL + Key) -->
-                <div id="openaiInputGroup" class="form-group">
-                    <label class="label">API URL</label>
-                    <input type="text" class="input-field" id="openaiUrlInput" placeholder="API URL을 입력해주세요.">
-                    <label class="label" style="margin-top: 10px;">API Key</label>
-                    <input type="password" class="input-field" id="openaiKeyInput" placeholder="API 키를 입력해주세요.">
-                </div>
-
-                <!-- Gemini Inputs (URL + Key) -->
-                <div id="geminiInputGroup" class="form-group hidden">
-                    <label class="label">API URL</label>
-                    <input type="text" class="input-field" id="geminiUrlInput" placeholder="API URL을 입력해주세요.">
-                    <label class="label" style="margin-top: 10px;">API Key</label>
-                    <input type="password" class="input-field" id="geminiKeyInput" placeholder="API 키를 입력해주세요.">
-                </div>
-
-                <!-- Claude Inputs (URL + Key) -->
-                <div id="claudeInputGroup" class="form-group hidden">
-                    <label class="label">API URL</label>
-                    <input type="text" class="input-field" id="claudeUrlInput" placeholder="API URL을 입력해주세요.">
-                    <label class="label" style="margin-top: 10px;">API Key</label>
-                    <input type="password" class="input-field" id="claudeKeyInput" placeholder="API 키를 입력해주세요.">
-                </div>
-
-                <!-- API Save/Reset Buttons -->
-                <div class="form-group" style="display: flex; gap: 10px;">
-                    <button class="btn btn-primary" onclick="saveApiConfig()" style="flex: 1;">Save API Key &
-                        Use</button>
-                    <button class="btn btn-secondary" onclick="resetApiConfig()" style="flex: 1;">Reset API Key</button>
-                </div>
-
-                <!-- Project Settings -->
-                <div class="form-group" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #DFE1E6;">
-                    <h3 style="font-size: 16px; margin-bottom: 10px; color: #172B4D;">프로젝트 설정</h3>
-                    <p style="font-size: 12px; color: #6B778C; margin-bottom: 15px;">입력 시 AI 추론 정확도가 향상됩니다</p>
-
-                    <label class="label">담당자 (협력사)</label>
-                    <input type="text" class="input-field" id="projectDeveloper" placeholder="예: 개발팀, 담당부서">
-
-                    <label class="label" style="margin-top: 10px;">System (제어기명)</label>
-                    <input type="text" class="input-field" id="projectSystem" placeholder="예: ooo 시스템, ECU">
-
-                    <label class="label" style="margin-top: 10px;">사양 담당자</label>
-                    <input type="text" class="input-field" id="projectClient" placeholder="예: 설계팀, OOO 회사">
-                </div>
-
-                <div class="form-group" style="display: flex; gap: 10px; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="saveProjectConfig()" style="flex: 1;">Save Project
-                        Settings</button>
-                    <button class="btn btn-secondary" onclick="resetProjectConfig()" style="flex: 1;">Reset Project
-                        Settings</button>
-                </div>
-
-                <div id="apiStatus" class="panel panel-warning" style="margin-top: 10px;">
-                    <span class="panel-icon">⚠️</span>
-                    <div>Please configure your API keys to use the application.</div>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    </div>
-
-    <script>
-        // Guide 1차 탭 전환
-        function switchGuidePrimaryTab(tabName) {
-            const container = document.querySelector('.guide-container');
-            // 모든 1차 탭 비활성화
-            container.querySelectorAll('.guide-tab-primary').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // 모든 1차 컨텐츠 숨김
-            container.querySelectorAll('.guide-primary-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // 선택된 탭 활성화
-            event.currentTarget.classList.add('active');
-            // 해당 컨텐츠 표시
-            document.getElementById('guide-primary-' + tabName).classList.add('active');
-        }
-
-        // Guide 2차 탭 전환
-        function switchGuideSecondaryTab(primary, secondary) {
-            const parentId = 'guide-primary-' + primary;
-            const parent = document.getElementById(parentId);
-
-            // 해당 부모의 모든 2차 탭 비활성화
-            parent.querySelectorAll('.guide-tab-secondary').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            // 해당 부모의 모든 2차 컨텐츠 숨김
-            parent.querySelectorAll('.guide-secondary-content').forEach(content => {
-                content.classList.remove('active');
-            });
-
-            // 선택된 탭 활성화
-            event.currentTarget.classList.add('active');
-            // 해당 컨텐츠 표시
-            const contentId = 'guide-' + primary + '-' + secondary;
-            document.getElementById(contentId).classList.add('active');
-        }
-    </script>
+    <!-- Scripts -->
     <script src="renderer.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>
